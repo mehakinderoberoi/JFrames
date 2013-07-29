@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
 import java.io.File;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,12 +27,25 @@ public class ProcessImage {
 	private static final double G_WEIGHT = 0.587;
 	private static final double U_MAX = 0.436;
 	private static final double V_MAX = 0.615;
+	
+	/**
+	 * Constants for option in getAverage
+	 */
+	public static final String R_RGB = "r";
+	public static final String G_RGB = "g";
+	public static final String B_RGB = "b";
+	public static final String Y_YUV = "y";
+	public static final String U_YUV = "u";
+	public static final String V_YUV = "v";
+	
+	public static final String OUTFILE_TYPE_JPG = "jpg";
+	public static final String OUTFILE_TYPE_PNG = "png";
 
 	private BufferedImage img = null;	//private instance holding the actual image
 	private int width, height;			//width and height for the frame
 	private String url;					//url for the image
 	
-	public ProcessImage(String url)
+	public ProcessImage(String url) throws IOException
 	{
 		this.img = readImage(url);
 		this.width = this.img.getWidth();
@@ -67,6 +81,8 @@ public class ProcessImage {
 		}
 		return (double) sum / (this.width * this.height);
 	}
+	
+	
 	
 	/**
 	 * Given the option, return the average of the value in image based on that option.
@@ -220,6 +236,26 @@ public class ProcessImage {
 	{
 		return this.img;
 	}
+	
+	
+	/**
+	 * Write the current image to a specified formate
+	 *  
+	 * 		Note that only JPEG is supported
+	 * 
+	 * 
+	 * @param url	output location
+	 * @param type	type of output, specified in this class by OUTFILE_TYPE_JPG
+	 * @throws IOException
+	 */
+	public void writeImage(String url, String type) throws IOException
+	{
+		if(type.equalsIgnoreCase(OUTFILE_TYPE_JPG))
+		{
+			ImageIO.write(this.img, "jpg", new File(url));
+		}
+	}
+	
 	/**
 	 * convert the image to yuv color space
 	 * @return 3 d array
@@ -249,7 +285,7 @@ public class ProcessImage {
 	 * 
 	 * @param img1
 	 * @param img2
-	 * @return
+	 * @return cross correlation between those two images
 	 */
 	public double getCrossCorrelationBetweenImages(ProcessImage other)
 	{
@@ -358,16 +394,9 @@ public class ProcessImage {
 	 * @param url
 	 * @return BufferedImage
 	 */
-	private static BufferedImage readImage(String url)
+	private static BufferedImage readImage(String url) throws IOException
 	{
-		BufferedImage img = null;
-		try{
-			img = ImageIO.read(new File(url));
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
+		BufferedImage img = ImageIO.read(new File(url));
 		return img;
 	}
 

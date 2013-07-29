@@ -17,11 +17,17 @@ public class ProcessMain {
 	}
 	private static void testGetSimilarityBetweenImages()
 	{
-		ProcessImage img1 = new ProcessImage(dir+"/frame1.jpg");
-		ProcessImage img2 = new ProcessImage(dir + "/frame2.jpg");
-		System.out.println(img1.getCrossCorrelationBetweenImages(img2));
-		System.out.println(img1.getSimilarityBetweenImage(img2));
+		try
+		{
+			ProcessImage img1 = new ProcessImage(dir+"/frame1.jpg");
+			ProcessImage img2 = new ProcessImage(dir + "/frame2.jpg");
+			System.out.println(img1.getCrossCorrelationBetweenImages(img2));
+			System.out.println(img1.getSimilarityBetweenImage(img2));
 
+		}catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 	private static void testGetRGBInfo(ProcessImage img)
 	{
