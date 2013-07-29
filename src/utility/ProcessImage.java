@@ -38,6 +38,36 @@ public class ProcessImage {
 		this.height = this.img.getHeight();
 		this.url = url;
 	}
+	
+	/**
+	 * Given other image, return the similarity between this image to the other image
+	 * 
+	 * The similarity here is defined by the average absolute difference between two images y component
+	 * 
+	 * @param other the other image to be processed, note the other image's dimension must match the current dimension
+	 * 			Else, the IllegalArgumentException will be thrown
+	 * @return the similarity
+	 */
+	
+	public double getSimilarityBetweenImage(ProcessImage other)
+	{
+		if(this.width != other.width || this.height != other.height)
+		{
+			throw new IllegalArgumentException("Make sure you use images that are of same dimension");
+		}
+		int[][][] first = this.readImageToYUV();
+		int[][][] second = other.readImageToYUV();
+		int sum = 0;
+		for(int row = 0; row < this.width; row++)
+		{
+			for(int col = 0; col < this.height; col++)
+			{
+				sum += Math.abs(first[row][col][0] - second[row][col][0]);
+			}
+		}
+		return (double) sum / (this.width * this.height);
+	}
+	
 	/**
 	 * Given the option, return the average of the value in image based on that option.
 	 * @param option choose from y, u, v, r, g, b (case insensitive). Note that 
@@ -209,30 +239,37 @@ public class ProcessImage {
 	}
 
 	/**
-	 * Given two images, return the correlation 
+	 * Given two images, return the cross correlation between those two images
+	 * 
+	 * The cross correlation is calculated using cos = dot_product(u, v) / len(u) * len(v)
+	 * 
+	 * Note that since all yuv value are positive. The cross correlation calculated is always
+	 * between 0 and 1. The more similar two images are, the closer the cross correlation is to
+	 * 1.
+	 * 
 	 * @param img1
 	 * @param img2
 	 * @return
 	 */
-	public static double getCrossCorrelationBetweenImages(BufferedImage img1, BufferedImage img2)
+	public double getCrossCorrelationBetweenImages(ProcessImage other)
 	{
-		int width_img1 = img1.getWidth(), height_img1 = img1.getHeight();
+		int width_img1 = this.width, height_img1 = this.height;
 		double[] yuv_img1 = new double[width_img1 * height_img1 * 3];
 		int index = 0;
 		for (int row = 0; row < width_img1; row++) {
 			for (int col = 0; col < height_img1; col++) {
-				Color color_img1 = new Color(img1.getRGB(row, col));
+				Color color_img1 = new Color(this.img.getRGB(row, col));
 				yuv_img1[index++] = rgb2yuv(color_img1)[0];
 				yuv_img1[index++] = rgb2yuv(color_img1)[1];
 				yuv_img1[index++] = rgb2yuv(color_img1)[2];
 			}
 		}
 		index = 0;
-		int width_img2 = img2.getWidth(), height_img2 = img2.getHeight();
+		int width_img2 = other.getDimention()[0], height_img2 = other.getDimention()[1];
 		double[] yuv_img2 = new double[width_img2 * height_img2 * 3];
 		for (int row = 0; row < width_img2; row++) {
 			for (int col = 0; col < height_img2; col++) {
-				Color color_img2 = new Color(img2.getRGB(row, col));
+				Color color_img2 = new Color(other.getImage().getRGB(row, col));
 				yuv_img2[index++] = rgb2yuv(color_img2)[0];
 				yuv_img2[index++] = rgb2yuv(color_img2)[1];
 				yuv_img2[index++] = rgb2yuv(color_img2)[2];

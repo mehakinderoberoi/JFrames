@@ -19,7 +19,7 @@ public class ProcessFrames {
 			List<String> candidates = listFilesForFolder(folder);
 			for (String name : candidates)
 			{
-				ProcessImage img = new ProcessImage(url + "\\" + name);
+				ProcessImage img = new ProcessImage(url + "/" + name);
 				this.frames.add(img);
 			}
 		}
