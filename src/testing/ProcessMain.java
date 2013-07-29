@@ -1,13 +1,14 @@
 package testing;
 
-import utility.Constants;
-import utility.ProcessFrames;
-import utility.ProcessImage;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
 
 import javax.imageio.ImageIO;
+
+import Core.Constants;
+import Core.ProcessFrames;
+import Core.ProcessImage;
 
 public class ProcessMain {
 	public static String dir = Constants.dir;
