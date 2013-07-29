@@ -38,6 +38,56 @@ public class ProcessImage {
 		this.height = this.img.getHeight();
 		this.url = url;
 	}
+	/**
+	 * Given the option, return the average of the value in image based on that option.
+	 * @param option choose from y, u, v, r, g, b (case insensitive). Note that 
+	 * @return average of y, u, v, r, g, or b value in the image
+	 */
+	public double getAverage(String option)
+	{
+		int index = -1;
+		boolean yuv = false;
+		if (option.equalsIgnoreCase("r") || option.equalsIgnoreCase("y"))
+		{
+			index = 0;
+			if(option.equalsIgnoreCase("y"))
+				yuv = true;
+		}
+		else if (option.equalsIgnoreCase("u") || option.equalsIgnoreCase("g"))
+		{
+			index = 1;
+			if(option.equalsIgnoreCase("u"))
+				yuv = true;
+		}
+		else if (option.equalsIgnoreCase("v") || option.equals("b"))
+		{
+			index = 2;
+			if(option.equalsIgnoreCase("v"))
+				yuv = true;
+		}
+		else
+		{
+			throw new IllegalArgumentException("The option must be y, u, v, r, g, b!");
+		}
+		int[][][] data = null;
+		int total = 0;
+		if(!yuv)
+		{
+			data = this.getRGBData();
+		}
+		else
+		{
+			data = this.readImageToYUV();
+		}
+		for(int row = 0; row < this.width; row++)
+		{
+			for(int col = 0; col < this.height; col++)
+			{
+				total += data[row][col][index];
+			}
+		}
+		return (double) total / this.width * this.height;
+	}
 
 	/**
 	 * This is to test the validity of the getYUVImage method. Basically it takes intensity image and UV image.
