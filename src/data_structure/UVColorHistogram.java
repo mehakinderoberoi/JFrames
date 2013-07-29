@@ -3,6 +3,7 @@ package data_structure;
 public class UVColorHistogram extends Histogram<Integer> {
 	
 	private int[][] buckets = null;
+	private boolean[][] hit = null;
 	private int numElements;
 
 	/**
@@ -11,6 +12,7 @@ public class UVColorHistogram extends Histogram<Integer> {
 	public UVColorHistogram()
 	{
 		this.buckets = new int[225][315];
+		this.hit = new boolean[225][315];
 	}
 	
 	/**
@@ -24,7 +26,10 @@ public class UVColorHistogram extends Histogram<Integer> {
 		}
 		int u = color[0];
 		int v = color[1];
-		this.buckets[colorToIndex(u, 'u')][colorToIndex(v, 'v')]++;
+		int u_index = colorToIndex(u, 'u');
+		int v_index = colorToIndex(v, 'v');
+		this.buckets[u_index][v_index]++;
+		this.hit[u_index][v_index] = true;
 		this.numElements++;
 	}
 
@@ -33,7 +38,19 @@ public class UVColorHistogram extends Histogram<Integer> {
 	 */
 	@Override
 	public void printStat() {
-		
+		System.out.println("*************************************************************");
+		System.out.println("Below is the statistics for the histalgram: ");
+		System.out.println("\tThere are " + this.numElements + " elements in the histagram");
+		for(int i = 0; i < 225; i++)
+		{
+			for(int j = 0; j < 315; j++)
+			{
+				if(this.hit[i][j])
+				{
+					System.out.println("There are " + this.buckets[i][j] + " elements in the color :" + i + " " + j);
+				}
+			}
+		}
 	}
 
 	/**
