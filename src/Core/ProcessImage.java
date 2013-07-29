@@ -45,6 +45,7 @@ public class ProcessImage {
 	private int width, height;			//width and height for the frame
 	private String url;					//url for the image
 	
+	
 	public ProcessImage(String url) throws IOException
 	{
 		this.img = readImage(url);

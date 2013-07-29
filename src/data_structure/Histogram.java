@@ -11,7 +11,7 @@ public abstract class Histogram<E> {
 	 * Put an element in Histagram
 	 * @param item
 	 */
-	public abstract void put(E item);
+	public abstract void put(E[] item);
 	
 	/**
 	 * Print the stat for the current Histogram
