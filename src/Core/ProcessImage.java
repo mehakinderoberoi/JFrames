@@ -132,7 +132,7 @@ public class ProcessImage {
 				total += data[row][col][index];
 			}
 		}
-		return (double) total / this.width * this.height;
+		return (double) total / (this.width * this.height);
 	}
 
 	/**
