@@ -47,7 +47,7 @@ public class UVColorHistogram extends Histogram<Integer> {
 			{
 				if(this.hit[i][j])
 				{
-					System.out.println("There are " + this.buckets[i][j] + " elements in the color :" + i + " " + j);
+					System.out.println("There are " + this.buckets[i][j] + " elements in the color u: " + indexToColor(i, 'u') + " in the color v: " + indexToColor(j, 'v'));
 				}
 			}
 		}
