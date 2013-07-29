@@ -1,4 +1,4 @@
-package data_structure;
+package Data_structure;
 
 /**
  * API for Histogram data-structure. Super class for all other used histogram

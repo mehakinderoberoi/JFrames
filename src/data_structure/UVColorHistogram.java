@@ -1,4 +1,4 @@
-package data_structure;
+package Data_structure;
 
 public class UVColorHistogram extends Histogram<Integer> {
 	

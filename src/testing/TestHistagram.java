@@ -2,7 +2,7 @@ package testing;
 
 import Core.Constants;
 import Core.ProcessImage;
-import data_structure.UVColorHistogram;
+import Data_structure.UVColorHistogram;
 
 public class TestHistagram 
 {
