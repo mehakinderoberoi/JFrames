@@ -24,6 +24,9 @@ public class TestHistagram
 			}
 			h.printStat();
 			int[] popular = h.getMostPopularElement();
+			int[] yuv_color = {0, popular[0], popular[1]};
+			ProcessImage popular_color = ProcessImage.createOneColorImage(ProcessImage.CREATE_FILE_COLOR_SPACE_YUV, yuv_color, 300, 300);
+			popular_color.writeImage(dir + "/color.jpg", ProcessImage.OUTFILE_TYPE_JPG);
 			System.out.println("U : " + popular[0] + " V: " + popular[1]);
 		}
 		catch(Exception e)

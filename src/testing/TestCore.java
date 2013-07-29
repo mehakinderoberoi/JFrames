@@ -14,7 +14,7 @@ public class TestCore {
 	public static String dir = Constants.dir;
 	public static void main(String[] args)
 	{
-		testYUVInfo();
+		testExtractY_UV();	
 	}
 	private static void testGetSimilarityBetweenImages()
 	{

@@ -27,7 +27,9 @@ public class ProcessImage {
 	private static final double G_WEIGHT = 0.587;
 	private static final double U_MAX = 0.436;
 	private static final double V_MAX = 0.615;
-	
+
+
+
 	/**
 	 * Constants for option in getAverage
 	 */
@@ -37,15 +39,18 @@ public class ProcessImage {
 	public static final String Y_YUV = "y";
 	public static final String U_YUV = "u";
 	public static final String V_YUV = "v";
-	
+
 	public static final String OUTFILE_TYPE_JPG = "jpg";
 	public static final String OUTFILE_TYPE_PNG = "png";
+
+	public static final int CREATE_FILE_COLOR_SPACE_RGB = 1;
+	public static final int CREATE_FILE_COLOR_SPACE_YUV = 2;
 
 	private BufferedImage img = null;	//private instance holding the actual image
 	private int width, height;			//width and height for the frame
 	private String url;					//url for the image
-	
-	
+
+
 	public ProcessImage(String url) throws IOException
 	{
 		this.img = readImage(url);
@@ -53,7 +58,15 @@ public class ProcessImage {
 		this.height = this.img.getHeight();
 		this.url = url;
 	}
-	
+
+	public ProcessImage(BufferedImage img)
+	{
+		this.img = img;
+		this.width = img.getWidth();
+		this.height = img.getHeight();
+		this.url = null;
+	}
+
 	/**
 	 * Given other image, return the similarity between this image to the other image
 	 * 
@@ -63,7 +76,7 @@ public class ProcessImage {
 	 * 			Else, the IllegalArgumentException will be thrown
 	 * @return the similarity
 	 */
-	
+
 	public double getSimilarityBetweenImage(ProcessImage other)
 	{
 		if(this.width != other.width || this.height != other.height)
@@ -82,9 +95,9 @@ public class ProcessImage {
 		}
 		return (double) sum / (this.width * this.height);
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Given the option, return the average of the value in image based on that option.
 	 * @param option choose from y, u, v, r, g, b (case insensitive). Note that 
@@ -153,7 +166,6 @@ public class ProcessImage {
 			for(int col = 0; col < this.height; col++)
 			{
 				int R, G, B;
-
 				R = (int)(intensity[row][col][0] + 1.140 * color[row][col][2]);
 				G = (int)(intensity[row][col][0] -0.395 * color[row][col][1] - 0.581 * color[row][col][2]);
 				B = (int)(intensity[row][col][0] + 2.032 * color[row][col][1]);
@@ -237,8 +249,8 @@ public class ProcessImage {
 	{
 		return this.img;
 	}
-	
-	
+
+
 	/**
 	 * Write the current image to a specified formate
 	 *  
@@ -256,7 +268,7 @@ public class ProcessImage {
 			ImageIO.write(this.img, "jpg", new File(url));
 		}
 	}
-	
+
 	/**
 	 * convert the image to yuv color space
 	 * @return 3 d array
@@ -333,10 +345,43 @@ public class ProcessImage {
 	}
 
 	/**
+	 * Given color space, data array, and dimension, return an image with only the color specified
+	 * int data array. (Right now mainly for debugging purposes)
+	 * 
+	 * @param color_space can be either CREATE_FILE_COLOR_SPACE_RGB, or CREATE_FILE_COLOR_SPACE_YUV
+	 * @param data 3d array that specifies the R, G, B value if color space is RGB or Y, U, V if color space
+	 * 		is Y, U, V
+	 * @param width width of the image
+	 * @param height height of the image
+	 * @return the created image
+	 */
+	public static ProcessImage createOneColorImage(int color_space, int[] data, int width, int height)
+	{
+		int[] rgb = null;
+		switch(color_space)
+		{
+		case CREATE_FILE_COLOR_SPACE_RGB:
+			break;
+		case CREATE_FILE_COLOR_SPACE_YUV:
+			rgb = yuv2rgb(data);
+			break;
+		default:
+			throw new IllegalArgumentException("Only support YUV and RGB right now!");
+		}
+		BufferedImage ret = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		WritableRaster raster = ret.getRaster();
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
+				raster.setPixel(i, j, rgb);
+			}
+		}
+		ProcessImage img = new ProcessImage(ret);
+		return img;
+	}
+
+	/**
 	 * helper to convert rbg color mode to yuv color mode
-	 * @param r
-	 * @param g
-	 * @param b
+	 * @param Color the color component
 	 * @return a vector with YUV value
 	 */
 	private static int[] rgb2yuv(Color c) 
@@ -352,13 +397,32 @@ public class ProcessImage {
 		//System.out.println("Y: " + y + " U: " + u + " V: " + v);
 		return yuv;
 	}
+
+	/**
+	 * helper to convert yuv color mode to rgb color mode
+	 * @param rgb rgb array that contains the color
+	 * @return a vector with YUV value
+	 */
+	private static int[] yuv2rgb(int[] yuv) 
+	{
+		int y = yuv[0], u = yuv[1], v = yuv[2];
+		int r = (int)(y + 1.140 * v);
+		int g = (int)(y - 0.395 * u - 0.581 * v);
+		int b = (int)(y + 2.032 * u);
+		int[] rgb = new int[3];
+		rgb = preventOverflow(rgb);
+		rgb[0]= r;
+		rgb[1]= g;
+		rgb[2]= b;
+		return rgb;
+	}
 	/**
 	 * This method is critical as the formula for converting YUV to RGB or RGB to YUV is not ganranteed to be within
 	 * the range of RGB value.
 	 * @param RGB raw RGB data
 	 * @return RGB data after processing
 	 */
-	private int[] preventOverflow(int[] RGB)
+	private static int[] preventOverflow(int[] RGB)
 	{
 		int R = RGB[0];
 		int G = RGB[1];
