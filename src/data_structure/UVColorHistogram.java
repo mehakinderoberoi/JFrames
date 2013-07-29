@@ -61,6 +61,28 @@ public class UVColorHistogram extends Histogram<Integer> {
 		return this.numElements;
 	}
 	
+	/**
+	 * return the color of highest frequencies in the histagram
+	 * @return
+	 */
+	public int[] getMostPopularElement()
+	{
+		int largest = -1, u = -1, v = -1;
+		for(int i = 0; i < this.buckets.length; i++)
+		{
+			for(int j = 0; j < this.buckets[i].length; j++)
+			{
+				if(this.buckets[i][j] > largest)
+				{
+					largest = this.buckets[i][j];
+					u = indexToColor(i, 'u');
+					v = indexToColor(j, 'v');
+				}
+			}
+		}
+		int[] popular = {u, v};
+		return popular;
+	}
 	
 	/**
 	 * Given the range start (inclusive) and end (exclusive), returns the index in the bucket

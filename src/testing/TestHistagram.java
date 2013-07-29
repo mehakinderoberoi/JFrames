@@ -23,6 +23,8 @@ public class TestHistagram
 				}
 			}
 			h.printStat();
+			int[] popular = h.getMostPopularElement();
+			System.out.println("U : " + popular[0] + " V: " + popular[1]);
 		}
 		catch(Exception e)
 		{
