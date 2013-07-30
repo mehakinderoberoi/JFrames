@@ -1,5 +1,9 @@
 package Data_structure;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.PriorityQueue;
+
 public class UVColorHistogram extends Histogram<Integer> {
 	
 	private int[][] buckets = null;
@@ -63,7 +67,7 @@ public class UVColorHistogram extends Histogram<Integer> {
 	
 	/**
 	 * return the color of highest frequencies in the histagram
-	 * @return
+	 * @return the most popular color in the histogram
 	 */
 	public int[] getMostPopularElement()
 	{
@@ -72,7 +76,7 @@ public class UVColorHistogram extends Histogram<Integer> {
 		{
 			for(int j = 0; j < this.buckets[i].length; j++)
 			{
-				if(this.buckets[i][j] > largest)
+				if(this.buckets[i][j] > largest && this.hit[i][j])
 				{
 					largest = this.buckets[i][j];
 					u = indexToColor(i, 'u');
@@ -82,6 +86,35 @@ public class UVColorHistogram extends Histogram<Integer> {
 		}
 		int[] popular = {u, v};
 		return popular;
+	}
+	
+	/**
+	 * get the sorted pixels in terms of hits pixels in decreasing order. 
+	 * 
+	 * Using Heap Sort O(nlogn)
+	 * 
+	 * @return sorted pixels based on numHits property
+	 */
+	public List<Pixel> getSortedHitsFromHistogram()
+	{
+		PriorityQueue<Pixel> q = new PriorityQueue<Pixel>();
+		for(int i = 0; i < this.buckets.length; i++)
+		{
+			for(int j = 0; j < this.buckets[i].length; j++)
+			{
+				int u = indexToColor(i, 'u');
+				int v = indexToColor(j, 'v');
+				int[] data = {u, v};
+				q.add(new Pixel(data, this.buckets[i][j]));
+			}
+		}
+		List<Pixel> sorted = new ArrayList<Pixel>();
+		while(!q.isEmpty())
+		{
+			Pixel curr = q.remove();
+			sorted.add(curr);
+		}
+		return sorted;
 	}
 	
 	/**

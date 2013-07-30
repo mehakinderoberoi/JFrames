@@ -14,7 +14,7 @@ public class TestCore {
 	public static String dir = Constants.dir;
 	public static void main(String[] args)
 	{
-		testExtractY_UV();	
+		getImageType();	
 	}
 	private static void testGetSimilarityBetweenImages()
 	{
@@ -90,6 +90,18 @@ public class TestCore {
 		for(ProcessImage img : p.getFrames())
 		{
 			System.out.println("Type of image: " + getImageType(img.getImage().getType()));
+		}
+	}
+	private static void getImageType()
+	{
+		try
+		{
+			ProcessImage img = new ProcessImage(dir+"/frame1.jpg");
+			System.out.println("Type of image: " + getImageType(img.getImage().getType()));
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
 		}
 	}
 	private static void printImageDataArray(int[][][] data)

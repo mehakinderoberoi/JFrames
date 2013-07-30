@@ -1,7 +1,10 @@
 package testing;
 
+import java.util.List;
+
 import Core.Constants;
 import Core.ProcessImage;
+import Data_structure.Pixel;
 import Data_structure.UVColorHistogram;
 
 public class TestHistagram 
@@ -12,7 +15,7 @@ public class TestHistagram
 		UVColorHistogram h = new UVColorHistogram();
 		try
 		{
-			ProcessImage img1 = new ProcessImage(dir + "/frame1.jpg");
+			ProcessImage img1 = new ProcessImage(dir + "/first.jpg");
 			int[][][] yuv = img1.readImageToYUV();
 			for(int i = 0; i < yuv.length; i++)
 			{
@@ -22,12 +25,16 @@ public class TestHistagram
 					h.put(color);
 				}
 			}
-			h.printStat();
-			int[] popular = h.getMostPopularElement();
-			int[] yuv_color = {0, popular[0], popular[1]};
-			ProcessImage popular_color = ProcessImage.createOneColorImage(ProcessImage.CREATE_FILE_COLOR_SPACE_YUV, yuv_color, 300, 300);
-			popular_color.writeImage(dir + "/color.jpg", ProcessImage.OUTFILE_TYPE_JPG);
-			System.out.println("U : " + popular[0] + " V: " + popular[1]);
+			int counter = 0;
+			List<Pixel> sorted = h.getSortedHitsFromHistogram().subList(0, 40);
+			
+			for(Pixel p : sorted)
+			{
+				int[] popular = p.getData();
+				int[] yuv_color = {0, popular[0], popular[1]};
+				ProcessImage popular_color = ProcessImage.createOneColorImage(ProcessImage.CREATE_FILE_COLOR_SPACE_YUV, yuv_color, 300, 300);
+				popular_color.writeImage(dir + "/color" + (counter++) + ".jpg", ProcessImage.OUTFILE_TYPE_JPG);
+			}
 		}
 		catch(Exception e)
 		{

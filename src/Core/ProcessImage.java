@@ -368,7 +368,7 @@ public class ProcessImage {
 		default:
 			throw new IllegalArgumentException("Only support YUV and RGB right now!");
 		}
-		BufferedImage ret = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		BufferedImage ret = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
 		WritableRaster raster = ret.getRaster();
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
@@ -394,7 +394,6 @@ public class ProcessImage {
 		yuv[0]= y;
 		yuv[1]= u;
 		yuv[2]= v;
-		//System.out.println("Y: " + y + " U: " + u + " V: " + v);
 		return yuv;
 	}
 
@@ -409,12 +408,9 @@ public class ProcessImage {
 		int r = (int)(y + 1.140 * v);
 		int g = (int)(y - 0.395 * u - 0.581 * v);
 		int b = (int)(y + 2.032 * u);
-		int[] rgb = new int[3];
-		rgb = preventOverflow(rgb);
-		rgb[0]= r;
-		rgb[1]= g;
-		rgb[2]= b;
-		return rgb;
+		int[] rgb = {r, g, b};
+		int[] cleaned = preventOverflow(rgb);
+		return cleaned;
 	}
 	/**
 	 * This method is critical as the formula for converting YUV to RGB or RGB to YUV is not ganranteed to be within
