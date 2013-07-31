@@ -21,7 +21,7 @@ public class TestCore {
 		try
 		{
 			ProcessImage img1 = new ProcessImage(dir+"/frame1.jpg");
-			ProcessImage img2 = new ProcessImage(dir + "/frame2.jpg");
+			ProcessImage img2 = new ProcessImage(dir + "/frame1.jpg");
 			System.out.println(img1.getCorrelationBetweenImages(img2));
 			System.out.println(img1.getSimilarityBetweenImage(img2));
 

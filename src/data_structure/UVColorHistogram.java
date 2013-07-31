@@ -1,5 +1,6 @@
 package Data_structure;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -159,6 +160,80 @@ public class UVColorHistogram extends Histogram<Integer> {
 			throw new IllegalArgumentException("Unidentified option! Must be U, V, u, v!");
 		}
 		return color;
+	}
+
+	/**
+	 * Given other histogram, get the correlation between two
+	 */
+	@Override
+	public double getCorrelation(Histogram<Integer> other) {
+		UVColorHistogram o = (UVColorHistogram) other;
+		if(o.buckets.length != this.buckets.length || o.buckets[0].length != this.buckets[0].length)
+		{
+			throw new IllegalArgumentException("Two histograms must be of same size");
+		}
+		double[] his1 = new double[this.buckets.length * this.buckets[0].length];
+		double sum_his1 = 0.0;
+		double avg_his1 = 0.0;
+		int index = 0;
+		for (int i = 0; i < this.buckets.length; i++) {
+			for (int j = 0; j < this.buckets[0].length; j++) {
+				his1[index++] = this.buckets[i][j];
+				sum_his1 += this.buckets[i][j];
+			}
+		}
+		avg_his1 = Math.ceil((double) sum_his1 / (this.buckets.length * this.buckets[0].length));
+		index = 0;
+		double[] his2 = new double[o.buckets.length * this.buckets[0].length];
+		double sum_his2 = 0.0;
+		double avg_his2 = 0.0;
+		for (int i = 0; i < o.buckets.length; i++) {
+			for (int j = 0; j < o.buckets[0].length; j++) {
+				his2[index++] = o.buckets[i][j];
+				sum_his2 += o.buckets[i][j];
+			}
+		}
+		avg_his2 = Math.ceil((double)sum_his2 / (o.buckets.length * this.buckets[0].length));
+		//naive implementation to find the cos(theta)
+		double inner_product = 0.0;
+		for (int i = 0; i < o.buckets.length * this.buckets[0].length; i++)
+		{
+			inner_product += (his1[i] - avg_his1) * (his2[i] - avg_his2);
+		}
+		double inner_his1 = 0.0, inner_his2 = 0.0;
+		for(int i = 0; i < his1.length; i++)
+		{
+			inner_his1 += Math.pow(his1[i] -avg_his1 , 2.0);
+		}
+		for(int i = 0; i < his2.length; i++)
+		{
+			inner_his2 += Math.pow(his2[i] - avg_his2, 2.0);
+		}
+		double length_product = Math.sqrt(inner_his1) * Math.sqrt(inner_his2);
+		return inner_product / length_product;
+	}
+
+	/**
+	 * Given other histogram, get the similarity between the two
+	 */
+	@Override
+	public double getSimilarity(Histogram<Integer> other) {
+		UVColorHistogram o = (UVColorHistogram) other;
+		if(this.buckets.length != o.buckets.length || this.buckets[0].length != o.buckets[0].length)
+		{
+			throw new IllegalArgumentException("Make sure you use images that are of same dimension");
+		}
+		int[][] first = this.buckets;
+		int[][] second = o.buckets;
+		int sum = 0;
+		for(int i = 0; i < this.buckets.length; i++)
+		{
+			for(int j = 0; j < this.buckets[0].length; j++)
+			{
+				sum += Math.abs(first[i][j] - second[i][j]);
+			}
+		}
+		return (double) sum / (this.buckets.length * this.buckets[0].length);
 	}
 
 }

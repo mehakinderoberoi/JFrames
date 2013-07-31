@@ -24,4 +24,12 @@ public abstract class Histogram<E> {
 	 */
 	public abstract int getElementsSize();
 	
+	/**
+	 * Get corelation between two histogram
+	 * @param other
+	 * @return
+	 */
+	public abstract double getCorrelation(Histogram<E> other);
+	
+	public abstract double getSimilarity(Histogram<E> other);
 }
