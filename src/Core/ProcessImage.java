@@ -288,57 +288,74 @@ public class ProcessImage {
 	}
 
 	/**
-	 * Given two images, return the cross correlation between those two images
+	 * Given two images, return the correlation between those two images. Two images must be of same size
 	 * 
 	 * The cross correlation is calculated using cos = dot_product(u, v) / len(u) * len(v)
 	 * 
 	 * Note that since all yuv value are positive. The cross correlation calculated is always
-	 * between 0 and 1. The more similar two images are, the closer the cross correlation is to
+	 * between -1 and 1. The more similar two images are, the closer the cross correlation is to
 	 * 1.
 	 * 
 	 * @param img1
 	 * @param img2
-	 * @return cross correlation between those two images
+	 * @return correlation between those two images
 	 */
-	public double getCrossCorrelationBetweenImages(ProcessImage other)
+	public double getCorrelationBetweenImages(ProcessImage other)
 	{
 		int width_img1 = this.width, height_img1 = this.height;
+		int width_img2 = other.getDimention()[0], height_img2 = other.getDimention()[1];
+		if(width_img1 != width_img2 || height_img1 != height_img2)
+		{
+			throw new IllegalArgumentException("Two images must be of same size");
+		}
 		double[] yuv_img1 = new double[width_img1 * height_img1 * 3];
+		double sum_yuv_img1 = 0.0;
+		double avg_yuv_img1 = 0.0;
 		int index = 0;
 		for (int row = 0; row < width_img1; row++) {
 			for (int col = 0; col < height_img1; col++) {
 				Color color_img1 = new Color(this.img.getRGB(row, col));
-				yuv_img1[index++] = rgb2yuv(color_img1)[0];
-				yuv_img1[index++] = rgb2yuv(color_img1)[1];
-				yuv_img1[index++] = rgb2yuv(color_img1)[2];
+				int y = rgb2yuv(color_img1)[0];
+				int u = rgb2yuv(color_img1)[1];
+				int v = rgb2yuv(color_img1)[2];
+				yuv_img1[index++] = y;
+				yuv_img1[index++] = u;
+				yuv_img1[index++] = v;
+				sum_yuv_img1 += y + u + v;
 			}
 		}
+		avg_yuv_img1 = Math.ceil((double) sum_yuv_img1 / (width_img1 * height_img1 * 3));
 		index = 0;
-		int width_img2 = other.getDimention()[0], height_img2 = other.getDimention()[1];
 		double[] yuv_img2 = new double[width_img2 * height_img2 * 3];
+		double sum_yuv_img2 = 0.0;
+		double avg_yuv_img2 = 0.0;
 		for (int row = 0; row < width_img2; row++) {
 			for (int col = 0; col < height_img2; col++) {
 				Color color_img2 = new Color(other.getImage().getRGB(row, col));
-				yuv_img2[index++] = rgb2yuv(color_img2)[0];
-				yuv_img2[index++] = rgb2yuv(color_img2)[1];
-				yuv_img2[index++] = rgb2yuv(color_img2)[2];
+				int y = rgb2yuv(color_img2)[0];
+				int u = rgb2yuv(color_img2)[1];
+				int v = rgb2yuv(color_img2)[2];
+				yuv_img2[index++] = y;
+				yuv_img2[index++] = u;
+				yuv_img2[index++] = v;
+				sum_yuv_img2 += y + u + v;
 			}
 		}
+		avg_yuv_img2 = Math.ceil((double)sum_yuv_img2 / (width_img2 * height_img2 * 3));
 		//naive implementation to find the cos(theta)
-		int smallest = (width_img1 * height_img1 < width_img2 * height_img2)? width_img1 * height_img1 : width_img2 * height_img2;
 		double inner_product = 0.0;
-		for (int i = 0; i < 3 * smallest; i++)
+		for (int i = 0; i < 3 * width_img1 * height_img1; i++)
 		{
-			inner_product += yuv_img1[i] * yuv_img2[i];
+			inner_product += (yuv_img1[i] - avg_yuv_img1) * (yuv_img2[i] - avg_yuv_img2);
 		}
 		double inner_img1 = 0.0, inner_img2 = 0.0;
 		for(int i = 0; i < yuv_img1.length; i++)
 		{
-			inner_img1 += Math.pow(yuv_img1[i], 2.0);
+			inner_img1 += Math.pow(yuv_img1[i] -avg_yuv_img1 , 2.0);
 		}
 		for(int i = 0; i < yuv_img2.length; i++)
 		{
-			inner_img2 += Math.pow(yuv_img2[i], 2.0);
+			inner_img2 += Math.pow(yuv_img2[i] - avg_yuv_img2, 2.0);
 		}
 		double length_product = Math.sqrt(inner_img1) * Math.sqrt(inner_img2);
 		return inner_product / length_product;

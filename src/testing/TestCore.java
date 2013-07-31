@@ -14,7 +14,7 @@ public class TestCore {
 	public static String dir = Constants.dir;
 	public static void main(String[] args)
 	{
-		getImageType();	
+		testGetSimilarityBetweenImages();
 	}
 	private static void testGetSimilarityBetweenImages()
 	{
@@ -22,7 +22,7 @@ public class TestCore {
 		{
 			ProcessImage img1 = new ProcessImage(dir+"/frame1.jpg");
 			ProcessImage img2 = new ProcessImage(dir + "/frame2.jpg");
-			System.out.println(img1.getCrossCorrelationBetweenImages(img2));
+			System.out.println(img1.getCorrelationBetweenImages(img2));
 			System.out.println(img1.getSimilarityBetweenImage(img2));
 
 		}catch (Exception e)
