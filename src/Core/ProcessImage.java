@@ -78,22 +78,11 @@ public class ProcessImage {
 	 */
 	public void strokeRectOnImage(Rectangle rec)
 	{
+		rectangleSanityCheck(rec);
 		int x1 = rec.getUpperLeftX();
 		int x2 = rec.getLowerRightX();
 		int y1 = rec.getUpperLeftY();
 		int y2 = rec.getLowerRightY();
-		if (x1 < 0 || y1 < 0 || x2 < 0 || y2 < 0)
-		{
-			throw new IllegalArgumentException("The coordinate must be non-negative!");
-		}
-		if(x1 > this.width || x2 > this.width || y1 > this.height || y2 > this.height)
-		{
-			throw new IllegalArgumentException("The coordinate must be within the dimension of the image");
-		}
-		if (x1 > x2 || y1 > y2)
-		{
-			throw new IllegalArgumentException("upper left coordinate must be left of and up to lower right coordinate");
-		}
 		Color c = rec.getStrokeColor();
 		int[] rgb = {c.getRed(), c.getGreen(), c.getBlue()};
 		WritableRaster w = this.img.getRaster();
@@ -106,6 +95,44 @@ public class ProcessImage {
 		{
 			w.setPixel(x1, j, rgb);
 			w.setPixel(x2, j, rgb);
+		}
+	}
+	
+	/**
+	 * Blur the rectangle area
+	 * @param rec
+	 */
+	public void blurRectOnImage(Rectangle rec)
+	{
+		rectangleSanityCheck(rec);
+		int x1 = rec.getUpperLeftX();
+		int x2 = rec.getLowerRightX();
+		int y1 = rec.getUpperLeftY();
+		int y2 = rec.getLowerRightY();
+		double avg_red = 0.0;
+		double avg_green = 0.0;
+		double avg_blue = 0.0;
+		for(int i = x1; i <= x2; i++)
+		{
+			for(int j = y1; j <= y2; j++)
+			{
+				Color c = new Color(img.getRGB(i, j));
+				avg_red += c.getRed();
+				avg_green += c.getGreen();
+				avg_blue += c.getBlue();
+			}
+		}
+		avg_red /= (rec.getHeight() * rec.getWidth());
+		avg_green /= (rec.getHeight() * rec.getWidth());
+		avg_blue /= (rec.getHeight() * rec.getWidth());
+		WritableRaster w = this.img.getRaster();
+		int[] avg = { (int) avg_red, (int) avg_green, (int) avg_blue};
+		for(int i = x1; i <= x2; i++)
+		{
+			for(int j = y1; j <= y2; j++)
+			{
+				w.setPixel(i, j, avg);
+			}
 		}
 	}
 	
@@ -509,6 +536,30 @@ public class ProcessImage {
 		int[] returned = {R, G, B};
 		return returned;
 	}
+	/**
+	 * Check if the rectangle is valid first
+	 * @param rec
+	 */
+	private void rectangleSanityCheck(Rectangle rec)
+	{
+		int x1 = rec.getUpperLeftX();
+		int x2 = rec.getLowerRightX();
+		int y1 = rec.getUpperLeftY();
+		int y2 = rec.getLowerRightY();
+		if (x1 < 0 || y1 < 0 || x2 < 0 || y2 < 0)
+		{
+			throw new IllegalArgumentException("The coordinate must be non-negative!");
+		}
+		if(x1 > this.width || x2 > this.width || y1 > this.height || y2 > this.height)
+		{
+			throw new IllegalArgumentException("The coordinate must be within the dimension of the image");
+		}
+		if (x1 > x2 || y1 > y2)
+		{
+			throw new IllegalArgumentException("upper left coordinate must be left of and up to lower right coordinate");
+		}
+	}
+	
 	/**
 	 * Give an image URL, read it as BufferedImage
 	 * @param url

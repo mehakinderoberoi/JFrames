@@ -16,7 +16,21 @@ public class TestCore {
 	public static String dir = Constants.dir;
 	public static void main(String[] args)
 	{
-		testStrokingRectangleOnImage();
+		testBlurRectangleOnImage();
+	}
+	private static void testBlurRectangleOnImage()
+	{
+		try
+		{
+			ProcessImage img1 = new ProcessImage(dir+"/frame1.jpg");
+			Rectangle rec = new Rectangle(100, 100, 300, 300);
+			img1.blurRectOnImage(rec);
+			img1.writeImage(dir + "/frame1_blur.jpg",  "jpg");
+
+		}catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 	private static void testStrokingRectangleOnImage()
 	{
