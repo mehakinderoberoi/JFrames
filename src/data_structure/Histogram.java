@@ -1,5 +1,7 @@
 package Data_structure;
 
+import java.io.IOException;
+
 /**
  * API for Histogram data-structure. Super class for all other used histogram
  * @author allenliu
@@ -32,4 +34,5 @@ public abstract class Histogram<E> {
 	public abstract double getCorrelation(Histogram<E> other);
 	
 	public abstract double getSimilarity(Histogram<E> other);
+	
 }

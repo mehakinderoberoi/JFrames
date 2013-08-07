@@ -6,15 +6,32 @@ import java.io.File;
 
 import javax.imageio.ImageIO;
 
-import Core.Constants;
+import Utility.Constants;
+
 import Core.ProcessFrames;
 import Core.ProcessImage;
+import Data_structure.Rectangle;
 
 public class TestCore {
 	public static String dir = Constants.dir;
 	public static void main(String[] args)
 	{
-		testGetSimilarityBetweenImages();
+		testStrokingRectangleOnImage();
+	}
+	private static void testStrokingRectangleOnImage()
+	{
+		try
+		{
+			ProcessImage img1 = new ProcessImage(dir+"/frame1.jpg");
+			Rectangle rec = new Rectangle(100, 100, 300, 300);
+			rec.setStrokeColor(Constants.COLOR_RED);
+			img1.strokeRectOnImage(rec);
+			img1.writeImage(dir + "/frame1_out.jpg",  "jpg");
+
+		}catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 	private static void testGetSimilarityBetweenImages()
 	{

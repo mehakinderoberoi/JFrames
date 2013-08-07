@@ -1,15 +1,16 @@
 package Data_structure;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
 
+
 public class UVColorHistogram extends Histogram<Integer> {
-	
+
 	private int[][] buckets = null;
 	private boolean[][] hit = null;
 	private int numElements;
+	private String name;
 
 	/**
 	 * default bucket 225 * 315 matrix.
@@ -19,7 +20,17 @@ public class UVColorHistogram extends Histogram<Integer> {
 		this.buckets = new int[225][315];
 		this.hit = new boolean[225][315];
 	}
-	
+
+	/**
+	 * default bucket 225 * 315 matrix.
+	 */
+	public UVColorHistogram(String name)
+	{
+		this.buckets = new int[225][315];
+		this.hit = new boolean[225][315];
+		this.name = name;
+	}
+
 	/**
 	 * put a color in this histagram
 	 */
@@ -65,7 +76,7 @@ public class UVColorHistogram extends Histogram<Integer> {
 	public int getElementsSize() {
 		return this.numElements;
 	}
-	
+
 	/**
 	 * return the color of highest frequencies in the histagram
 	 * @return the most popular color in the histogram
@@ -88,7 +99,7 @@ public class UVColorHistogram extends Histogram<Integer> {
 		int[] popular = {u, v};
 		return popular;
 	}
-	
+
 	/**
 	 * get the sorted pixels in terms of hits pixels in decreasing order. 
 	 * 
@@ -117,7 +128,7 @@ public class UVColorHistogram extends Histogram<Integer> {
 		}
 		return sorted;
 	}
-	
+
 	/**
 	 * Given the range start (inclusive) and end (exclusive), returns the index in the bucket
 	 * @param start starting range, inclusive
@@ -235,5 +246,4 @@ public class UVColorHistogram extends Histogram<Integer> {
 		}
 		return (double) sum / (this.buckets.length * this.buckets[0].length);
 	}
-
 }

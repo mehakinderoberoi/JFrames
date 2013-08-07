@@ -2,7 +2,8 @@ package testing;
 
 import java.util.List;
 
-import Core.Constants;
+import Utility.Constants;
+
 import Core.ProcessImage;
 import Data_structure.Pixel;
 import Data_structure.UVColorHistogram;
@@ -31,8 +32,8 @@ public class TestHistagram
 					h1.put(color1);
 				}
 			}
-			System.out.println("Similarity: " + h.getSimilarity(h1));
-			System.out.println("Correlation: " + h.getCorrelation(h1));
+			//System.out.println("Similarity: " + h.getSimilarity(h1));
+			//System.out.println("Correlation: " + h.getCorrelation(h1));
 		}
 		catch(Exception e)
 		{

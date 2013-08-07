@@ -11,6 +11,10 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import Utility.Formula;
+
+import Data_structure.Rectangle;
+
 
 /**
  * This class represent each frame in the program and corresponding available operations we can do to them
@@ -67,6 +71,44 @@ public class ProcessImage {
 		this.url = null;
 	}
 
+	
+	/**
+	 * Given the rectangle coordinate, write out the rectangles in the image
+	 * @param rect
+	 */
+	public void strokeRectOnImage(Rectangle rec)
+	{
+		int x1 = rec.getUpperLeftX();
+		int x2 = rec.getLowerRightX();
+		int y1 = rec.getUpperLeftY();
+		int y2 = rec.getLowerRightY();
+		if (x1 < 0 || y1 < 0 || x2 < 0 || y2 < 0)
+		{
+			throw new IllegalArgumentException("The coordinate must be non-negative!");
+		}
+		if(x1 > this.width || x2 > this.width || y1 > this.height || y2 > this.height)
+		{
+			throw new IllegalArgumentException("The coordinate must be within the dimension of the image");
+		}
+		if (x1 > x2 || y1 > y2)
+		{
+			throw new IllegalArgumentException("upper left coordinate must be left of and up to lower right coordinate");
+		}
+		Color c = rec.getStrokeColor();
+		int[] rgb = {c.getRed(), c.getGreen(), c.getBlue()};
+		WritableRaster w = this.img.getRaster();
+		for(int i = x1; i <= x2; i++)
+		{
+			w.setPixel(i, y1, rgb);
+			w.setPixel(i, y2, rgb);
+		}
+		for(int j = y1; j <= y2; j++)
+		{
+			w.setPixel(x1, j, rgb);
+			w.setPixel(x2, j, rgb);
+		}
+	}
+	
 	/**
 	 * Given other image, return the similarity between this image to the other image
 	 * 
