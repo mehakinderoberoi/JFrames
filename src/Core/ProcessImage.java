@@ -176,6 +176,11 @@ public class ProcessImage {
 		return (double) sum / (this.width * this.height);
 	}
 	
+	/**
+	 * Given an rectangle, output the image of interest
+	 * @param rec
+	 * @return
+	 */
 	public ProcessImage getRectangleImage(Rectangle rec)
 	{
 		rectangleSanityCheck(rec);
@@ -192,23 +197,6 @@ public class ProcessImage {
 		}
 		return new ProcessImage(img);
 	}
-	
-	public double getSimilarityBetweenRectangles(ProcessImage other, Rectangle otherRec, Rectangle currRec)
-	{
-		int[][][] first = this.readImageToYUV();
-		int[][][] second = other.readImageToYUV();
-		int sum = 0;
-		for(int row = 0; row < this.width; row++)
-		{
-			for(int col = 0; col < this.height; col++)
-			{
-				sum += Math.abs(first[row][col][0] - second[row][col][0]);
-			}
-		}
-		return (double) sum / (this.width * this.height);
-	}
-
-
 
 	/**
 	 * Given the option, return the average of the value in image based on that option.

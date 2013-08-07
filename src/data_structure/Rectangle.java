@@ -87,6 +87,13 @@ public class Rectangle extends Shape{
 		return Math.abs(this.y1 - this.y2);
 	}
 	
+	public String toString()
+	{
+		StringBuilder s = new StringBuilder();
+		s.append("x1: " + this.x1 + " y1 : " + this.y1 + " x2: " + this.x2 + " y2: " + this.y2);
+		return s.toString();
+	}
+	
 	@Override
 	public double calcArea() {
 		return this.getWidth() * this.getHeight();

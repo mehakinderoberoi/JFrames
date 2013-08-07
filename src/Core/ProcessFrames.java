@@ -38,19 +38,29 @@ public class ProcessFrames {
 		this.curr = new ProcessImage(this.folder + "/" + frames.get(++counter));
 	}
 	
+	public List<ProcessImage> getPrevCurrImages()
+	{
+		List<ProcessImage> li = new ArrayList<ProcessImage>();
+		li.add(this.prev);
+		li.add(this.curr);
+		return li;
+	}
+	
 	/**
 	 * Given a set of template region in each ProcessImage, move the rectangle box a bit 25px around to determine the best
 	 * fit with the previous template in prev image
 	 * @param region
 	 */
-	public void drawBestFitInPrev()
+	public void drawBestFitInPrevOnCurr()
 	{
 		List<Rectangle> prevRegions = this.prev.getTemplateRegions();
 		Random rand = new Random();
 		for(Rectangle rec : prevRegions)
 		{
 			Rectangle bestFit = rec;
-			int numTrials = rand.nextInt(4) + 2;
+			double highestCorrelation = Double.NEGATIVE_INFINITY;
+			//System.out.println("original: x1" + rec.getUpperLeftX() + " y1: " + rec.getUpperLeftY() + " x2: " + rec.getLowerRightX() + " y2: " + rec.getLowerRightY());
+			int numTrials = rand.nextInt(15) + 5;
 			for(int i = 0; i < numTrials; i++)
 			{
 				int offset = rand.nextInt(11) - 5;
@@ -58,43 +68,52 @@ public class ProcessFrames {
 				int y1 = rec.getUpperLeftY();
 				int x2 = rec.getLowerRightX();
 				int y2 = rec.getLowerRightY();
-				if(x1 + offset < 0)
+			
+				int new_x1 = x1 + offset;
+				int new_y1 = y1 + offset;
+				int new_x2 = x2 + offset;
+				int new_y2 = y2 + offset;
+				//quite impossible cases but just in case
+				if (new_x1 > this.curr.getDimention()[0] - 1 || new_y1 > this.curr.getDimention()[1] - 1 || new_x2 < 0 || new_y2 < 0)
 				{
-					x1 = 0;
+					throw new IllegalArgumentException("Image is too small!");
 				}
-				else if (x1 + offset > this.curr.getDimention()[0] - 1)
+				if(new_x1 < 0)
 				{
-					x1 = this.curr.getDimention()[0] - 1;
+					new_x1 = 0;
+					new_x2 += Math.abs(offset);
 				}
-				if(y1 + offset < 0)
+				if(new_y1 < 0)
 				{
-					y1 = 0;
+					new_y1 = 0;
+					new_y2 += Math.abs(offset);
 				}
-				else if(y1 + offset > this.curr.getDimention()[1] - 1)
+				if (new_x2 > this.curr.getDimention()[0] - 1)
 				{
-					y1 = this.curr.getDimention()[1] - 1;
+					new_x2 = this.curr.getDimention()[0] - 1;
+					new_x1 -= Math.abs(offset);
 				}
-				if(x2 + offset < 0)
+				if(new_y2 > this.curr.getDimention()[1] - 1)
 				{
-					x2 = 0;
-				}
-				else if (x2 + offset > this.curr.getDimention()[0] - 1)
-				{
-					x2 = this.curr.getDimention()[0] - 1;
-				}
-				if(y2 + offset < 0)
-				{
-					y2 = 0;
-				}
-				else if(y2 + offset > this.curr.getDimention()[1] - 1)
-				{
-					y2 = this.curr.getDimention()[1] - 1;
+					new_y1 -= Math.abs(offset);
+					new_y2 = this.curr.getDimention()[1] - 1;
 				}	
-				Rectangle newRegion = new Rectangle(x1, y1, x2, y2);
+				//System.out.println("x1: " + new_x1 + " y1: " + new_y1 + " x2: " + new_x2 + " y2: " + new_y2);
+				Rectangle new_rec = new Rectangle(new_x1, new_y1, new_x2, new_y2);
+				ProcessImage prev = this.prev.getRectangleImage(rec);
+				ProcessImage curr = this.curr.getRectangleImage(new_rec);
+				double correlation = curr.getCorrelationBetweenImages(prev);
+				if(correlation > highestCorrelation)
+				{
+					System.out.println("correlation: " + correlation);
+					highestCorrelation = correlation;
+					bestFit = new_rec;
+				}
 			}
+			System.out.println("Best fit rectangle: " + bestFit);
 		}
+		
 	}
-	
 	/**
 	 * Recursive helper for displaying all files in the folder
 	 * @param folder

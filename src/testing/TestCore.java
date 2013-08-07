@@ -2,22 +2,39 @@ package testing;
 
 
 import java.awt.image.BufferedImage;
-import java.io.File;
-
-import javax.imageio.ImageIO;
-
-import Utility.Constants;
+import java.util.ArrayList;
+import java.util.List;
 
 import Core.ProcessFrames;
 import Core.ProcessImage;
 import Data_structure.Rectangle;
+import Utility.Constants;
 
 public class TestCore {
 	public static String dir = Constants.dir;
 	public static void main(String[] args)
 	{
-		testStrokingRectangleOnImage();
-		testExtractRectangleImage();
+		testProcessFrames();
+	}
+	private static void testProcessFrames()
+	{
+		try
+		{
+			ProcessFrames frames = new ProcessFrames(dir);
+			List<ProcessImage> images = frames.getPrevCurrImages();
+			ProcessImage prev = images.get(0);
+			ProcessImage curr = images.get(1);
+			List<Rectangle> l = new ArrayList<Rectangle>();
+			l.add(new Rectangle(100, 100, 250, 250));
+			prev.setTemplateRegions(l);
+			frames.drawBestFitInPrevOnCurr();
+			prev.writeImage(dir +"/frame1_prev.jpg" , "jpg");
+			curr.writeImage(dir + "/frame1_rectangles.jpg",  "jpg");
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 	private static void testExtractRectangleImage()
 	{
@@ -26,9 +43,8 @@ public class TestCore {
 			ProcessImage img1 = new ProcessImage(dir+"/frame1.jpg");
 			Rectangle rec = new Rectangle(200, 200, 250, 250);
 			ProcessImage recImg = img1.getRectangleImage(rec);
-			recImg.writeImage(dir + "/frame1_rec.jpg",  "jpg");
-
-		}catch (Exception e)
+		}
+		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
