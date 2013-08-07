@@ -7,32 +7,42 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * Class is implemented to do image processing on each frames.
+ * @author allenliu
+ *
+ */
 public class ProcessFrames {
 
-	private List<ProcessImage> frames;
-	public ProcessFrames(String url)
+	private ProcessImage prev;
+	private ProcessImage curr;
+	private List<String> files;
+	private int counter;
+	private int numFrames;
+	private String folder;
+	public ProcessFrames(String url) throws IOException
 	{
-		this.frames = new ArrayList<ProcessImage>();
-		try
-		{
-			File folder = new File(url);
-			List<String> candidates = listFilesForFolder(folder);
-			for (String name : candidates)
-			{
-				ProcessImage img = new ProcessImage(url + "/" + name);
-				this.frames.add(img);
-			}
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-		
+		List<String> files = listFilesForFolder(new File(url));
+		this.counter = 1;
+		this.folder = url;
+		this.prev = new ProcessImage(url + "/" + files.get(0));
+		this.curr = new ProcessImage(url + "/" + files.get(1));
 	}
-	public List<ProcessImage> getFrames()
+	/**
+	 * select the curr frame to be prev frame and next frame to be curr frame
+	 */
+	public void next() throws IOException
 	{
-		return this.frames;
+		this.prev = this.curr;
+		this.curr = new ProcessImage(this.folder + "/" + files.get(++counter));
 	}
+	
+	/**
+	 * Recursive helper for displaying all files in the folder
+	 * @param folder
+	 * @return
+	 */
 	private List<String> listFilesForFolder(File folder) {
 		List<String> candidates = new ArrayList<String>();
 	    for (File fileEntry : folder.listFiles()) {
