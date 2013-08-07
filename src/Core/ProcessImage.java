@@ -50,10 +50,11 @@ public class ProcessImage {
 	public static final int CREATE_FILE_COLOR_SPACE_RGB = 1;
 	public static final int CREATE_FILE_COLOR_SPACE_YUV = 2;
 
-	private BufferedImage img = null;	//private instance holding the actual image
+	private BufferedImage img;	//private instance holding the actual image
 	private int width, height;			//width and height for the frame
 	private String url;					//url for the image
 
+	private List<Rectangle> templateRegions;
 
 	public ProcessImage(String url) throws IOException
 	{
@@ -61,6 +62,7 @@ public class ProcessImage {
 		this.width = this.img.getWidth();
 		this.height = this.img.getHeight();
 		this.url = url;
+		templateRegions = null;
 	}
 
 	public ProcessImage(BufferedImage img)
@@ -71,6 +73,15 @@ public class ProcessImage {
 		this.url = null;
 	}
 
+	public void setTemplateRegions(List<Rectangle> regions)
+	{
+		this.templateRegions = regions;
+	}
+	
+	public List<Rectangle> getTemplateRegions()
+	{
+		return this.templateRegions;
+	}
 	
 	/**
 	 * Given the rectangle coordinate, write out the rectangles in the image
@@ -152,6 +163,38 @@ public class ProcessImage {
 		{
 			throw new IllegalArgumentException("Make sure you use images that are of same dimension");
 		}
+		int[][][] first = this.readImageToYUV();
+		int[][][] second = other.readImageToYUV();
+		int sum = 0;
+		for(int row = 0; row < this.width; row++)
+		{
+			for(int col = 0; col < this.height; col++)
+			{
+				sum += Math.abs(first[row][col][0] - second[row][col][0]);
+			}
+		}
+		return (double) sum / (this.width * this.height);
+	}
+	
+	public ProcessImage getRectangleImage(Rectangle rec)
+	{
+		rectangleSanityCheck(rec);
+		BufferedImage img = new BufferedImage(rec.getWidth(), rec.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
+		WritableRaster w = img.getRaster();
+		for(int i = 0; i < rec.getWidth(); i++)
+		{
+			for(int j = 0; j < rec.getHeight(); j++)
+			{
+				Color c = new Color(this.img.getRGB(i + rec.getUpperLeftX(), j + rec.getUpperLeftY()));
+				int[] rgb = {c.getRed(), c.getGreen(), c.getBlue()};
+				w.setPixel(i, j, rgb);
+			}
+		}
+		return new ProcessImage(img);
+	}
+	
+	public double getSimilarityBetweenRectangles(ProcessImage other, Rectangle otherRec, Rectangle currRec)
+	{
 		int[][][] first = this.readImageToYUV();
 		int[][][] second = other.readImageToYUV();
 		int sum = 0;

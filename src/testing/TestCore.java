@@ -16,14 +16,29 @@ public class TestCore {
 	public static String dir = Constants.dir;
 	public static void main(String[] args)
 	{
-		testBlurRectangleOnImage();
+		testStrokingRectangleOnImage();
+		testExtractRectangleImage();
+	}
+	private static void testExtractRectangleImage()
+	{
+		try
+		{
+			ProcessImage img1 = new ProcessImage(dir+"/frame1.jpg");
+			Rectangle rec = new Rectangle(200, 200, 250, 250);
+			ProcessImage recImg = img1.getRectangleImage(rec);
+			recImg.writeImage(dir + "/frame1_rec.jpg",  "jpg");
+
+		}catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 	private static void testBlurRectangleOnImage()
 	{
 		try
 		{
 			ProcessImage img1 = new ProcessImage(dir+"/frame1.jpg");
-			Rectangle rec = new Rectangle(100, 100, 300, 300);
+			Rectangle rec = new Rectangle(200, 200, 250, 250);
 			img1.blurRectOnImage(rec);
 			img1.writeImage(dir + "/frame1_blur.jpg",  "jpg");
 
@@ -37,7 +52,7 @@ public class TestCore {
 		try
 		{
 			ProcessImage img1 = new ProcessImage(dir+"/frame1.jpg");
-			Rectangle rec = new Rectangle(100, 100, 300, 300);
+			Rectangle rec = new Rectangle(200, 200, 250, 250);
 			rec.setStrokeColor(Constants.COLOR_RED);
 			img1.strokeRectOnImage(rec);
 			img1.writeImage(dir + "/frame1_out.jpg",  "jpg");
@@ -85,42 +100,6 @@ public class TestCore {
 				System.out.println("R: " + rgb[i][j][0] + " G: " + rgb[i][j][1] + " B: " + rgb[i][j][2]);
 			}
 			System.out.println();
-		}
-	}
-	private static void testExtractY_UV()
-	{
-		int intensity_counter = 0;
-		int color_counter = 0;
-
-		ProcessFrames p = new ProcessFrames(dir);
-		for(ProcessImage img : p.getFrames())
-		{
-			try
-			{
-				BufferedImage Y_img = img.getYUVImage("Y");
-				ImageIO.write(Y_img, "jpg", new File(dir + "/intensity" + (++intensity_counter) + ".jpg"));
-				BufferedImage UV_img = img.getYUVImage("UV");			
-				ImageIO.write(UV_img, "jpg", new File(dir + "/color" + (++color_counter) + ".jpg"));
-
-			}
-			catch(Exception e)
-			{
-				e.printStackTrace();
-			}
-		}
-		try{
-			ProcessImage intensity = new ProcessImage(dir + "/intensity1.jpg");
-			ProcessImage color = new ProcessImage(dir + "/color1.jpg");
-			BufferedImage combined = intensity.restoreToNormal(color);
-			ImageIO.write(combined, "jpg", new File(dir + "/normal_first.jpg"));
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-		for(ProcessImage img : p.getFrames())
-		{
-			System.out.println("Type of image: " + getImageType(img.getImage().getType()));
 		}
 	}
 	private static void getImageType()
