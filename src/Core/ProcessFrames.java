@@ -165,7 +165,7 @@ public class ProcessFrames {
 				}
 			}
 			double correlation =  prev_h.getCorrelation(curr_h);
-			System.out.println("Histogram correlation: " + correlation);
+			//System.out.println("Histogram correlation: " + correlation);
 			if(correlation > 0.70)
 			{
 				this.curr.strokeRectOnImage(bestFitRec);
@@ -177,6 +177,7 @@ public class ProcessFrames {
 	
 	/**
 	 * Recursive helper for displaying all files in the folder
+	 * in the order of the number after each files
 	 * @param folder
 	 * @return
 	 */

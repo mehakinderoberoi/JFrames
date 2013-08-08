@@ -56,6 +56,10 @@ public class ProcessImage {
 
 	private List<Rectangle> templateRegions;
 
+	/**
+	 * Constructors for ProcessImage
+	 * @throws IOException
+	 */
 	public ProcessImage(String url) throws IOException
 	{
 		this.img = readImage(url);
@@ -64,7 +68,6 @@ public class ProcessImage {
 		this.url = url;
 		templateRegions = null;
 	}
-
 	public ProcessImage(BufferedImage img)
 	{
 		this.img = img;
@@ -73,11 +76,20 @@ public class ProcessImage {
 		this.url = null;
 	}
 
+	/**
+	 * set which region in this image that we want to use it as template to do the template 
+	 * matching with other region
+	 * @param regions specify the rectangle region we select as template
+	 */
 	public void setTemplateRegions(List<Rectangle> regions)
 	{
 		this.templateRegions = regions;
 	}
 	
+	/**
+	 * getter for template region
+	 * @return
+	 */
 	public List<Rectangle> getTemplateRegions()
 	{
 		return this.templateRegions;
