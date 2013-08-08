@@ -3,6 +3,7 @@ package Core;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -193,6 +194,18 @@ public class ProcessFrames {
 	        	}
 	        }
 	    }
-	    return candidates;
+	    List<Integer> fileNumbers = new ArrayList<Integer>();
+	    //reorder the image files
+	    for(String name : candidates)
+	    {
+	    	fileNumbers.add(Integer.parseInt(name.substring(5, name.lastIndexOf("."))));
+	    }
+	    Collections.sort(fileNumbers);
+	    List<String> result = new ArrayList<String>();
+	    for(Integer i : fileNumbers)
+	    {
+	    	result.add("frame" + i + ".jpg");
+	    }
+	    return result;
 	}
 }

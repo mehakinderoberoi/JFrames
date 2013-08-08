@@ -31,13 +31,14 @@ public class TestCore {
 			List<Rectangle> l = new ArrayList<Rectangle>();
 			l.add(rec);
 			prev.setTemplateRegions(l);
-			frames.outputPrevImg(output_dir + "/frame" + counter++);
+			frames.outputPrevImg(output_dir + "/frame" + (counter++) + ".jpg");
 			while(frames.hasNext())
 			{
 				frames.drawBestFitInPrevOnCurr();
-				frames.outputCurrImg(output_dir + "/frame" + counter++);
+				frames.outputPrevImg(output_dir + "/frame" + (counter++) + ".jpg");
 				frames.next();
 			}
+			frames.outputCurrImg(output_dir + "/frame" + (counter++) + ".jpg");
 			long endTime = System.currentTimeMillis();
 			System.out.println("Took "+(endTime - startTime) + " s"); 
 		}
