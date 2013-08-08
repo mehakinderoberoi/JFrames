@@ -10,7 +10,7 @@ import Data_structure.UVColorHistogram;
 
 public class TestHistagram 
 {
-	public static String dir = Constants.dir;
+	public static String dir = Constants.input_dir;
 	public static void main(String[] args)
 	{
 		UVColorHistogram h = new UVColorHistogram();

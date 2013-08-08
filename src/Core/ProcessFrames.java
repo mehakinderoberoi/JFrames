@@ -63,6 +63,21 @@ public class ProcessFrames {
 	}
 	
 	/**
+	 * Methods for outputing the current set of images
+	 * @param url
+	 * @throws IOException
+	 */
+	public void outputCurrImg(String url) throws IOException
+	{
+		this.curr.writeImage(url, "jpg");
+	}
+	
+	public void outputPrevImg(String url) throws IOException
+	{
+		this.prev.writeImage(url, "jpg");
+	}
+	
+	/**
 	 * Given a set of template region in each ProcessImage, move the rectangle box a bit 25px around to determine the best
 	 * fit with the previous template in prev image
 	 * 
