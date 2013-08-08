@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import Utility.Constants;
+
 import Data_structure.Rectangle;
 import Data_structure.UVColorHistogram;
 
@@ -39,6 +41,19 @@ public class ProcessFrames {
 		this.curr = new ProcessImage(this.folder + "/" + frames.get(++counter));
 	}
 	
+	/**
+	 * check if we have next frame available
+	 * @return true if we have
+	 */
+	public boolean hasNext()
+	{
+		return (counter < this.frames.size() - 1) ? true : false;
+	}
+	
+	/**
+	 * return the prev frame and curr frame
+	 * @return
+	 */
 	public List<ProcessImage> getPrevCurrImages()
 	{
 		List<ProcessImage> li = new ArrayList<ProcessImage>();
@@ -59,6 +74,7 @@ public class ProcessFrames {
 	public void drawBestFitInPrevOnCurr()
 	{
 		List<Rectangle> prevRegions = this.prev.getTemplateRegions();
+		List<Rectangle> returnedRectangle = new ArrayList<Rectangle>();
 		Random rand = new Random();
 		for(Rectangle rec : prevRegions)
 		{
@@ -66,7 +82,7 @@ public class ProcessFrames {
 			Rectangle bestFitRec = rec;
 			ProcessImage prev = this.prev.getRectangleImage(rec);
 			double highestCorrelation = Double.NEGATIVE_INFINITY;
-			System.out.println("original: x1" + rec.getUpperLeftX() + " y1: " + rec.getUpperLeftY() + " x2: " + rec.getLowerRightX() + " y2: " + rec.getLowerRightY());
+			//System.out.println("original: x1" + rec.getUpperLeftX() + " y1: " + rec.getUpperLeftY() + " x2: " + rec.getLowerRightX() + " y2: " + rec.getLowerRightY());
 			int numTrials = rand.nextInt(15) + 5;
 			for(int i = 0; i < numTrials; i++)
 			{
@@ -105,14 +121,14 @@ public class ProcessFrames {
 					new_y1 -= Math.abs(offset);
 					new_y2 = this.curr.getDimention()[1] - 1;
 				}	
-				System.out.println("x1: " + new_x1 + " y1: " + new_y1 + " x2: " + new_x2 + " y2: " + new_y2);
-				Rectangle new_rec = new Rectangle(new_x1, new_y1, new_x2, new_y2);
+				//System.out.println("x1: " + new_x1 + " y1: " + new_y1 + " x2: " + new_x2 + " y2: " + new_y2);
+				Rectangle new_rec = new Rectangle(new_x1, new_y1, new_x2, new_y2, Constants.COLOR_RED);
 				ProcessImage curr = this.curr.getRectangleImage(new_rec);
 				double correlation = curr.getCorrelationBetweenImages(prev);
 				if(correlation > highestCorrelation)
 				{
-					System.out.println("Best correlation: " + correlation + " ");
-					System.out.println("Best rectangle" + new_rec);
+					//System.out.println("Best correlation: " + correlation + " ");
+					//System.out.println("Best rectangle" + new_rec);
 					highestCorrelation = correlation;
 					bestFit = curr;
 					bestFitRec = new_rec;
@@ -134,11 +150,13 @@ public class ProcessFrames {
 			}
 			double correlation =  prev_h.getCorrelation(curr_h);
 			System.out.println("Histogram correlation: " + correlation);
-			if(correlation > 0.80)
+			if(correlation > 0.70)
 			{
 				this.curr.strokeRectOnImage(bestFitRec);
+				returnedRectangle.add(bestFitRec);
 			}
 		}
+		this.curr.setTemplateRegions(returnedRectangle);
 	}
 	
 	/**

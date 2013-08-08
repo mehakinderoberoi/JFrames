@@ -14,7 +14,52 @@ public class TestCore {
 	public static String dir = Constants.dir;
 	public static void main(String[] args)
 	{
-		testProcessFrames();
+		testImprovements();
+	}
+	private static void testImprovements()
+	{
+		try
+		{
+			long startTime = System.currentTimeMillis();
+			ProcessFrames frames = new ProcessFrames(dir);
+			List<ProcessImage> images = frames.getPrevCurrImages();
+			ProcessImage prev = images.get(0);
+			ProcessImage curr = images.get(1);
+			List<Rectangle> l = new ArrayList<Rectangle>();
+			l.add(new Rectangle(407, 50, 472, 123));
+			prev.setTemplateRegions(l);
+			while(frames.hasNext())
+			{
+				frames.drawBestFitInPrevOnCurr();
+				frames.next();
+			}
+			long endTime = System.currentTimeMillis();
+			System.out.println("Took "+(endTime - startTime) + " s"); 
+			
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	private static void testIteratingFrames()
+	{
+		try
+		{
+			long startTime = System.currentTimeMillis();
+			ProcessFrames frames = new ProcessFrames(dir);
+			while(frames.hasNext())
+			{
+				frames.next();
+			}
+			long endTime = System.currentTimeMillis();
+			System.out.println("Took "+(endTime - startTime) + " s"); 
+			
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 	private static void testProcessFrames()
 	{
