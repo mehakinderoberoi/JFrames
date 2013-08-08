@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Random;
 
 import Data_structure.Rectangle;
+import Data_structure.UVColorHistogram;
 
 
 /**
@@ -49,6 +50,10 @@ public class ProcessFrames {
 	/**
 	 * Given a set of template region in each ProcessImage, move the rectangle box a bit 25px around to determine the best
 	 * fit with the previous template in prev image
+	 * 
+	 * First compute the correlation between the intensity of two bounding box. Then use the correlation of UV color histogram
+	 * between two images to verify that this is true.
+	 * 
 	 * @param region
 	 */
 	public void drawBestFitInPrevOnCurr()
@@ -57,9 +62,11 @@ public class ProcessFrames {
 		Random rand = new Random();
 		for(Rectangle rec : prevRegions)
 		{
-			Rectangle bestFit = rec;
+			ProcessImage bestFit = null;
+			Rectangle bestFitRec = rec;
+			ProcessImage prev = this.prev.getRectangleImage(rec);
 			double highestCorrelation = Double.NEGATIVE_INFINITY;
-			//System.out.println("original: x1" + rec.getUpperLeftX() + " y1: " + rec.getUpperLeftY() + " x2: " + rec.getLowerRightX() + " y2: " + rec.getLowerRightY());
+			System.out.println("original: x1" + rec.getUpperLeftX() + " y1: " + rec.getUpperLeftY() + " x2: " + rec.getLowerRightX() + " y2: " + rec.getLowerRightY());
 			int numTrials = rand.nextInt(15) + 5;
 			for(int i = 0; i < numTrials; i++)
 			{
@@ -98,22 +105,42 @@ public class ProcessFrames {
 					new_y1 -= Math.abs(offset);
 					new_y2 = this.curr.getDimention()[1] - 1;
 				}	
-				//System.out.println("x1: " + new_x1 + " y1: " + new_y1 + " x2: " + new_x2 + " y2: " + new_y2);
+				System.out.println("x1: " + new_x1 + " y1: " + new_y1 + " x2: " + new_x2 + " y2: " + new_y2);
 				Rectangle new_rec = new Rectangle(new_x1, new_y1, new_x2, new_y2);
-				ProcessImage prev = this.prev.getRectangleImage(rec);
 				ProcessImage curr = this.curr.getRectangleImage(new_rec);
 				double correlation = curr.getCorrelationBetweenImages(prev);
 				if(correlation > highestCorrelation)
 				{
-					System.out.println("correlation: " + correlation);
+					System.out.println("Best correlation: " + correlation + " ");
+					System.out.println("Best rectangle" + new_rec);
 					highestCorrelation = correlation;
-					bestFit = new_rec;
+					bestFit = curr;
+					bestFitRec = new_rec;
 				}
 			}
-			System.out.println("Best fit rectangle: " + bestFit);
+			int[][][] prev_yuv = prev.readImageToYUV();
+			int[][][] best_yuv = bestFit.readImageToYUV();
+			UVColorHistogram prev_h = new UVColorHistogram();
+			UVColorHistogram curr_h = new UVColorHistogram();
+			for(int i = 0; i < prev_yuv.length; i++)
+			{
+				for(int j = 0; j < prev_yuv[i].length; j++)
+				{
+					Integer[] curr_uv = {prev_yuv[i][j][1], prev_yuv[i][j][2]};
+					Integer[] prev_uv = {best_yuv[i][j][1], best_yuv[i][j][2]};
+					prev_h.put(prev_uv);
+					curr_h.put(curr_uv);
+				}
+			}
+			double correlation =  prev_h.getCorrelation(curr_h);
+			System.out.println("Histogram correlation: " + correlation);
+			if(correlation > 0.80)
+			{
+				this.curr.strokeRectOnImage(bestFitRec);
+			}
 		}
-		
 	}
+	
 	/**
 	 * Recursive helper for displaying all files in the folder
 	 * @param folder

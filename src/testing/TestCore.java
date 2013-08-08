@@ -25,11 +25,11 @@ public class TestCore {
 			ProcessImage prev = images.get(0);
 			ProcessImage curr = images.get(1);
 			List<Rectangle> l = new ArrayList<Rectangle>();
-			l.add(new Rectangle(100, 100, 250, 250));
+			l.add(new Rectangle(34, 110, 114, 198));
 			prev.setTemplateRegions(l);
 			frames.drawBestFitInPrevOnCurr();
-			prev.writeImage(dir +"/frame1_prev.jpg" , "jpg");
-			curr.writeImage(dir + "/frame1_rectangles.jpg",  "jpg");
+			prev.writeImage(dir +"/frame_prev.jpg" , "jpg");
+			curr.writeImage(dir + "/frame_curr.jpg",  "jpg");
 		}
 		catch(Exception e)
 		{
