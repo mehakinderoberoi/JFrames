@@ -35,7 +35,7 @@ public class TestCore {
 			frames.outputPrevImg(output_dir + "/frame" + (counter++) + ".jpg");
 			while(frames.hasNext())
 			{
-				frames.drawBestFitInPrevOnCurr();
+				frames.drawBestFitInPrevOnCurr_Correlation();
 				frames.outputPrevImg(output_dir + "/frame" + (counter++) + ".jpg");
 				frames.next();
 			}
@@ -78,7 +78,7 @@ public class TestCore {
 			List<Rectangle> l = new ArrayList<Rectangle>();
 			l.add(new Rectangle(34, 110, 114, 198));
 			prev.setTemplateRegions(l);
-			frames.drawBestFitInPrevOnCurr();
+			frames.drawBestFitInPrevOnCurr_Correlation();
 			prev.writeImage(input_dir +"/frame_prev.jpg" , "jpg");
 			curr.writeImage(input_dir + "/frame_curr.jpg",  "jpg");
 		}
