@@ -26,11 +26,15 @@ public class TestCore {
 			ProcessFrames frames = new ProcessFrames(input_dir);
 			List<ProcessImage> images = frames.getPrevCurrImages();
 			ProcessImage prev = images.get(0);
-			Rectangle rec = new Rectangle(407, 50, 472, 123);
-			rec.setStrokeColor(Constants.COLOR_RED);
-			prev.strokeRectOnImage(rec);
+			Rectangle rec1 = new Rectangle(81, 71, 151, 161);
+			Rectangle rec2 = new Rectangle(365, 125, 428, 198);
+			rec1.setStrokeColor(Constants.COLOR_RED);
+			rec2.setStrokeColor(Constants.COLOR_RED);
+			prev.strokeRectOnImage(rec1);
+			prev.strokeRectOnImage(rec2);
 			List<Rectangle> l = new ArrayList<Rectangle>();
-			l.add(rec);
+			l.add(rec1);
+			l.add(rec2);
 			prev.setTemplateRegions(l);
 			frames.outputPrevImg(output_dir + "/frame" + (counter++) + ".jpg");
 			while(frames.hasNext())

@@ -102,7 +102,7 @@ public class ProcessFrames {
 			int numTrials = rand.nextInt(10) + 10;
 			for(int i = 0; i < numTrials; i++)
 			{
-				int offset = rand.nextInt(11) - 5;
+				int offset = rand.nextInt(21) - 10;
 				int x1 = rec.getUpperLeftX();
 				int y1 = rec.getUpperLeftY();
 				int x2 = rec.getLowerRightX();
@@ -142,6 +142,7 @@ public class ProcessFrames {
 				new_rec.setStrokeColor(rec.getStrokeColor());
 				ProcessImage curr = this.curr.getRectangleImage(new_rec);
 				double correlation = curr.getCorrelationBetweenImages(prev);
+				this.curr.strokeRectOnImage(new_rec);
 				if(correlation > highestCorrelation)
 				{
 					//System.out.println("Best correlation: " + correlation + " ");
