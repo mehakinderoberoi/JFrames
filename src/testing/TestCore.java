@@ -26,7 +26,8 @@ public class TestCore {
 			ProcessFrames frames = new ProcessFrames(input_dir);
 			List<ProcessImage> images = frames.getPrevCurrImages();
 			ProcessImage prev = images.get(0);
-			Rectangle rec = new Rectangle(407, 50, 472, 123, Constants.COLOR_RED);
+			Rectangle rec = new Rectangle(407, 50, 472, 123);
+			rec.setStrokeColor(Constants.COLOR_RED);
 			prev.strokeRectOnImage(rec);
 			List<Rectangle> l = new ArrayList<Rectangle>();
 			l.add(rec);

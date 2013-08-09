@@ -49,9 +49,9 @@ public class Rectangle extends Shape{
 	{
 		return this.thickness;
 	}
-	public Color getStrokeColor()
+	public int getStrokeColor()
 	{
-		return Formula.convertConsToColor(this.strokeColor);
+		return this.strokeColor;
 	}
 	public void setStrokeColor(int color)
 	{

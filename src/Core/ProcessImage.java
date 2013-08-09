@@ -106,7 +106,7 @@ public class ProcessImage {
 		int x2 = rec.getLowerRightX();
 		int y1 = rec.getUpperLeftY();
 		int y2 = rec.getLowerRightY();
-		Color c = rec.getStrokeColor();
+		Color c = Formula.convertConsToColor(rec.getStrokeColor());
 		int[] rgb = {c.getRed(), c.getGreen(), c.getBlue()};
 		WritableRaster w = this.img.getRaster();
 		for(int i = x1; i <= x2; i++)

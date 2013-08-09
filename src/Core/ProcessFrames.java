@@ -99,7 +99,7 @@ public class ProcessFrames {
 			ProcessImage prev = this.prev.getRectangleImage(rec);
 			double highestCorrelation = Double.NEGATIVE_INFINITY;
 			//System.out.println("original: x1" + rec.getUpperLeftX() + " y1: " + rec.getUpperLeftY() + " x2: " + rec.getLowerRightX() + " y2: " + rec.getLowerRightY());
-			int numTrials = rand.nextInt(15) + 5;
+			int numTrials = rand.nextInt(10) + 10;
 			for(int i = 0; i < numTrials; i++)
 			{
 				int offset = rand.nextInt(11) - 5;
@@ -138,7 +138,8 @@ public class ProcessFrames {
 					new_y2 = this.curr.getDimention()[1] - 1;
 				}	
 				//System.out.println("x1: " + new_x1 + " y1: " + new_y1 + " x2: " + new_x2 + " y2: " + new_y2);
-				Rectangle new_rec = new Rectangle(new_x1, new_y1, new_x2, new_y2, Constants.COLOR_RED);
+				Rectangle new_rec = new Rectangle(new_x1, new_y1, new_x2, new_y2);
+				new_rec.setStrokeColor(rec.getStrokeColor());
 				ProcessImage curr = this.curr.getRectangleImage(new_rec);
 				double correlation = curr.getCorrelationBetweenImages(prev);
 				if(correlation > highestCorrelation)
@@ -165,7 +166,6 @@ public class ProcessFrames {
 				}
 			}
 			double correlation =  prev_h.getCorrelation(curr_h);
-			//System.out.println("Histogram correlation: " + correlation);
 			if(correlation > 0.70)
 			{
 				this.curr.strokeRectOnImage(bestFitRec);
@@ -182,8 +182,8 @@ public class ProcessFrames {
 	 * @return
 	 */
 	private List<String> listFilesForFolder(File folder) {
-		List<String> candidates = new ArrayList<String>();
-	    for (File fileEntry : folder.listFiles()) {
+		int numFiles = 0;
+		for (File fileEntry : folder.listFiles()) {
 	        if (fileEntry.isDirectory()) {
 	            listFilesForFolder(fileEntry);
 	        } else {
@@ -191,19 +191,12 @@ public class ProcessFrames {
 	        	String extension = filename.substring(filename.lastIndexOf('.') + 1).trim();
 	        	if(extension.equals("jpg") || extension.equals("jpeg") || extension.equals("jpe") || extension.equals("jfif"))
 	        	{
-		            candidates.add(fileEntry.getName());
+		            numFiles++;
 	        	}
 	        }
-	    }
-	    List<Integer> fileNumbers = new ArrayList<Integer>();
-	    //reorder the image files
-	    for(String name : candidates)
-	    {
-	    	fileNumbers.add(Integer.parseInt(name.substring(5, name.lastIndexOf("."))));
-	    }
-	    Collections.sort(fileNumbers);
+		}
 	    List<String> result = new ArrayList<String>();
-	    for(Integer i : fileNumbers)
+	    for(int i = 1; i <= numFiles; i++)
 	    {
 	    	result.add("frame" + i + ".jpg");
 	    }
