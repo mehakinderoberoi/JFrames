@@ -10,7 +10,7 @@ import java.io.IOException;
 public abstract class Histogram<E> {
 	
 	/**
-	 * Put an element in Histagram
+	 * Put an element in histogram
 	 * @param item
 	 */
 	public abstract void put(E[] item);
@@ -21,18 +21,23 @@ public abstract class Histogram<E> {
 	public abstract void printStat();
 	
 	/**
-	 * get number of element in the histagram
+	 * get number of element in the histogram
 	 * @return size of elements
 	 */
 	public abstract int getElementsSize();
 	
 	/**
-	 * Get corelation between two histogram
+	 * Get correlation between two histogram
 	 * @param other
 	 * @return
 	 */
 	public abstract double getCorrelation(Histogram<E> other);
 	
+	/**
+	 * Get similarity between two histogram
+	 * @param other
+	 * @return
+	 */
 	public abstract double getSimilarity(Histogram<E> other);
 	
 }

@@ -5,6 +5,12 @@ import java.awt.Color;
 import Utility.Constants;
 import Utility.Formula;
 
+/**
+ * Use this class to represent retangle regions on the ProcessImage
+ * 
+ * @author allenliu
+ *
+ */
 public class Rectangle extends Shape{
 	
 	/* Upper left coordinate */

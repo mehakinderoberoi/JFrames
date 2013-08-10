@@ -14,17 +14,25 @@ import Data_structure.UVColorHistogram;
 
 
 /**
- * Class is implemented to do image processing on each frames.
+ * Class is implemented to do image processing on all frames of a video. To save the memory and time
+ * of processing, I only keep track of two instance of ProcessImage at a time.
+ * 
  * @author allenliu
  *
  */
 public class ProcessFrames {
 
-	private ProcessImage prev;
-	private ProcessImage curr;
-	private List<String> frames;
-	private int counter;
-	private String folder;
+	private ProcessImage prev;		//previous template image
+	private ProcessImage curr;		//current working image
+	private List<String> frames;	//stores the names of all frames
+	private int counter;			//use to get the name of each frame (Note frame name must be of form: frame1.jpg, frame2.jpg)
+	private String folder;			//contain the folder location
+	
+	/**
+	 * Given the folder path, initialize the ProcessFrame instance
+	 * @param url path for folder
+	 * @throws IOException
+	 */
 	public ProcessFrames(String url) throws IOException
 	{
 	    this.frames = listFilesForFolder(new File(url));
@@ -33,8 +41,10 @@ public class ProcessFrames {
 		this.prev = new ProcessImage(url + "/" + frames.get(0));
 		this.curr = new ProcessImage(url + "/" + frames.get(1));
 	}
+	
 	/**
-	 * select the curr frame to be prev frame and next frame to be curr frame
+	 * Select the next two pairs to work with. 
+	 * @throws IOException
 	 */
 	public void next() throws IOException
 	{
@@ -43,7 +53,7 @@ public class ProcessFrames {
 	}
 	
 	/**
-	 * check if we have next frame available
+	 * check if we have next pair of frames available
 	 * @return true if we have
 	 */
 	public boolean hasNext()
@@ -52,8 +62,8 @@ public class ProcessFrames {
 	}
 	
 	/**
-	 * return the prev frame and curr frame
-	 * @return
+	 * return the prev frame and curr frame in the current working set of entire frames
+	 * @return list containing curr and prev ProcessImage instance.
 	 */
 	public List<ProcessImage> getPrevCurrImages()
 	{
@@ -64,8 +74,8 @@ public class ProcessFrames {
 	}
 	
 	/**
-	 * Methods for outputing the current set of images
-	 * @param url
+	 * Methods for outputing the current image in current working set of images
+	 * @param url path for output
 	 * @throws IOException
 	 */
 	public void outputCurrImg(String url) throws IOException
@@ -73,6 +83,11 @@ public class ProcessFrames {
 		this.curr.writeImage(url, "jpg");
 	}
 	
+	/**
+	 * Methods for outputing the previous image in current working set of images
+	 * @param url path for output
+	 * @throws IOException
+	 */
 	public void outputPrevImg(String url) throws IOException
 	{
 		this.prev.writeImage(url, "jpg");
@@ -85,7 +100,6 @@ public class ProcessFrames {
 	 * First compute the correlation between the intensity of two bounding box. Then use the correlation of UV color histogram
 	 * between two images to verify that this is true.
 	 * 
-	 * @param region
 	 */
 	public void drawBestFitInPrevOnCurr_Correlation()
 	{
@@ -99,7 +113,7 @@ public class ProcessFrames {
 			ProcessImage prev = this.prev.getRectangleImage(rec);
 			double highestCorrelation = Double.NEGATIVE_INFINITY;
 			//System.out.println("original: x1" + rec.getUpperLeftX() + " y1: " + rec.getUpperLeftY() + " x2: " + rec.getLowerRightX() + " y2: " + rec.getLowerRightY());
-			int numTrials = rand.nextInt(10) + 10;
+			int numTrials = rand.nextInt(11) + 10;
 			for(int i = 0; i < numTrials; i++)
 			{
 				int offset = rand.nextInt(21) - 10;
@@ -142,7 +156,7 @@ public class ProcessFrames {
 				new_rec.setStrokeColor(rec.getStrokeColor());
 				ProcessImage curr = this.curr.getRectangleImage(new_rec);
 				double correlation = curr.getCorrelationBetweenImages(prev);
-				this.curr.strokeRectOnImage(new_rec);
+				//this.curr.strokeRectOnImage(new_rec);
 				if(correlation > highestCorrelation)
 				{
 					//System.out.println("Best correlation: " + correlation + " ");
@@ -180,10 +194,9 @@ public class ProcessFrames {
 	 * Given a set of template region in each ProcessImage, move the rectangle box a bit 25px around to determine the best
 	 * fit with the previous template in prev image
 	 * 
-	 * First compute the correlation between the intensity of two bounding box. Then use the correlation of UV color histogram
+	 * First compute the similarity between the intensity of two bounding box. Then use the similarity of UV color histogram
 	 * between two images to verify that this is true.
 	 * 
-	 * @param region
 	 */
 	public void drawBestFitInPrevOnCurr_Similarity()
 	{
@@ -276,8 +289,8 @@ public class ProcessFrames {
 	/**
 	 * Recursive helper for displaying all files in the folder
 	 * in the order of the number after each files
-	 * @param folder
-	 * @return
+	 * @param folder path for the folder location
+	 * @return list of string containing name of files in the folder
 	 */
 	private List<String> listFilesForFolder(File folder) {
 		int numFiles = 0;

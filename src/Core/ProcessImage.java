@@ -50,14 +50,18 @@ public class ProcessImage {
 	public static final int CREATE_FILE_COLOR_SPACE_RGB = 1;
 	public static final int CREATE_FILE_COLOR_SPACE_YUV = 2;
 
-	private BufferedImage img;	//private instance holding the actual image
-	private int width, height;			//width and height for the frame
+	private BufferedImage img;	//private instance holding the actual image. See more on BufferedImage in Java official doc
+	private int width, height;			//width and height for the image
 	private String url;					//url for the image
 
-	private List<Rectangle> templateRegions;
+	private List<Rectangle> templateRegions;		//store a list of rectangles on this image that serves as template for next image 
 
 	/**
-	 * Constructors for ProcessImage
+	 * Given the url (relative or absolute), initialize a ProcessImage object
+	 * 
+	 * ProcessImage, as name suggested, allows individual to do image operations on the image specified
+	 * 
+	 * @param url	relative or absolute path for the location of image
 	 * @throws IOException
 	 */
 	public ProcessImage(String url) throws IOException
@@ -68,6 +72,11 @@ public class ProcessImage {
 		this.url = url;
 		templateRegions = null;
 	}
+	/**
+	 * Given the BufferedImage, create an instance of ProcessImage
+	 * @param img	BufferedImage for instance of ProcessImage. This is the actual image data stored in the 
+	 * 				process image
+	 */
 	public ProcessImage(BufferedImage img)
 	{
 		this.img = img;
@@ -78,7 +87,7 @@ public class ProcessImage {
 
 	/**
 	 * set which region in this image that we want to use it as template to do the template 
-	 * matching with other region
+	 * matching with the next image
 	 * @param regions specify the rectangle region we select as template
 	 */
 	public void setTemplateRegions(List<Rectangle> regions)
@@ -88,7 +97,7 @@ public class ProcessImage {
 	
 	/**
 	 * getter for template region
-	 * @return
+	 * @return a list of templates in current image
 	 */
 	public List<Rectangle> getTemplateRegions()
 	{
@@ -96,8 +105,8 @@ public class ProcessImage {
 	}
 	
 	/**
-	 * Given the rectangle coordinate, write out the rectangles in the image
-	 * @param rect
+	 * Given the rectangle coordinate, draw out the rectangles in the image
+	 * @param rect specified rectangle location on the image
 	 */
 	public void strokeRectOnImage(Rectangle rec)
 	{
@@ -122,8 +131,11 @@ public class ProcessImage {
 	}
 	
 	/**
-	 * Blur the rectangle area
-	 * @param rec
+	 * Blur the rectangle area. This is a native way of blurring the image.
+	 * Basically sums up all image data, R, G, B, respectively and then take their
+	 * average respectively as substitute for original image data
+	 * 
+	 * @param rec specified rectangle location on the image
 	 */
 	public void blurRectOnImage(Rectangle rec)
 	{
@@ -166,7 +178,7 @@ public class ProcessImage {
 	 * 
 	 * @param other the other image to be processed, note the other image's dimension must match the current dimension
 	 * 			Else, the IllegalArgumentException will be thrown
-	 * @return the similarity
+	 * @return the similarity of y component in the YUV color space for current image
 	 */
 
 	public double getSimilarityBetweenImage(ProcessImage other)
@@ -190,8 +202,8 @@ public class ProcessImage {
 	
 	/**
 	 * Given an rectangle, output the image of interest
-	 * @param rec
-	 * @return
+	 * @param rec specified extracted region in the image
+	 * @return ProcessImage with specified rectangle region
 	 */
 	public ProcessImage getRectangleImage(Rectangle rec)
 	{
@@ -212,7 +224,7 @@ public class ProcessImage {
 
 	/**
 	 * Given the option, return the average of the value in image based on that option.
-	 * @param option choose from y, u, v, r, g, b (case insensitive). Note that 
+	 * @param option choose from y, u, v, r, g, b (case insensitive).
 	 * @return average of y, u, v, r, g, or b value in the image
 	 */
 	public double getAverage(String option)
@@ -346,7 +358,7 @@ public class ProcessImage {
 	}
 	/**
 	 * get dimension of the image
-	 * @return
+	 * @return [width, height]
 	 */
 	public int[] getDimention()
 	{
@@ -364,12 +376,12 @@ public class ProcessImage {
 
 
 	/**
-	 * Write the current image to a specified formate
+	 * Write the current image to a specified format
 	 *  
-	 * 		Note that only JPEG is supported
+	 * 		Note that only JPEG is supported right now
 	 * 
 	 * 
-	 * @param url	output location
+	 * @param url	output location, relative or absolute
 	 * @param type	type of output, specified in this class by OUTFILE_TYPE_JPG
 	 * @throws IOException
 	 */
@@ -383,7 +395,7 @@ public class ProcessImage {
 
 	/**
 	 * convert the image to yuv color space
-	 * @return 3 d array
+	 * @return 3 d array containing the yuv data for current image
 	 */
 	public int[][][] readImageToYUV()
 	{
@@ -402,9 +414,9 @@ public class ProcessImage {
 	/**
 	 * Given two images, return the correlation between those two images. Two images must be of same size
 	 * 
-	 * The cross correlation is calculated using cos = dot_product(u, v) / len(u) * len(v)
+	 * The cross correlation is calculated using cos = dot_product(u, v) / (len(u) * len(v))
 	 * 
-	 * Note that since all yuv value are positive. The cross correlation calculated is always
+	 * Note that since all yuv value are positive, I subtract mean from each obtained doc product. The cross correlation calculated therefore is always
 	 * between -1 and 1. The more similar two images are, the closer the cross correlation is to
 	 * 1.
 	 * 
@@ -528,8 +540,8 @@ public class ProcessImage {
 
 	/**
 	 * helper to convert yuv color mode to rgb color mode
-	 * @param rgb rgb array that contains the color
-	 * @return a vector with YUV value
+	 * @param yuv yuv array that contains the color
+	 * @return a vector with rgb value
 	 */
 	private static int[] yuv2rgb(int[] yuv) 
 	{
@@ -545,7 +557,7 @@ public class ProcessImage {
 	 * This method is critical as the formula for converting YUV to RGB or RGB to YUV is not ganranteed to be within
 	 * the range of RGB value.
 	 * @param RGB raw RGB data
-	 * @return RGB data after processing
+	 * @return valid and useable RGB data
 	 */
 	private static int[] preventOverflow(int[] RGB)
 	{
@@ -580,8 +592,8 @@ public class ProcessImage {
 		return returned;
 	}
 	/**
-	 * Check if the rectangle is valid first
-	 * @param rec
+	 * Check if the rectangle is valid. Valid means if it is within the bounds of image
+	 * @param rec region of interest on the image
 	 */
 	private void rectangleSanityCheck(Rectangle rec)
 	{
@@ -615,7 +627,9 @@ public class ProcessImage {
 	}
 
 	/**
-	 * Return the deep copy of targeted image
+	 * Given a target of a BufferedImage instance, return a full copy of it
+	 * @param bi target BufferedImage
+	 * @return a deep copy of bi
 	 */
 	private static BufferedImage deepCopy(BufferedImage bi) {
 		ColorModel cm = bi.getColorModel();

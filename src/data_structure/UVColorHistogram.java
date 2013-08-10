@@ -13,7 +13,7 @@ public class UVColorHistogram extends Histogram<Integer> {
 	private String name;
 
 	/**
-	 * default bucket 225 * 315 matrix.
+	 * default constructor
 	 */
 	public UVColorHistogram()
 	{
@@ -22,7 +22,8 @@ public class UVColorHistogram extends Histogram<Integer> {
 	}
 
 	/**
-	 * default bucket 225 * 315 matrix.
+	 * Construct UV color histogram with the name of histogram
+	 * @param name the name of histogram
 	 */
 	public UVColorHistogram(String name)
 	{
@@ -30,9 +31,10 @@ public class UVColorHistogram extends Histogram<Integer> {
 		this.hit = new boolean[225][315];
 		this.name = name;
 	}
-
+	
 	/**
-	 * put a color in this histagram
+	 * Put a color into this UVHistogram
+	 * @param color [U, V]
 	 */
 	@Override
 	public void put(Integer[] color) {
@@ -70,7 +72,9 @@ public class UVColorHistogram extends Histogram<Integer> {
 	}
 
 	/**
-	 * Return how many elements are stored in this histagram
+	 * Return how many elements are stored in this histogram
+	 * 
+	 * @return number of elements in the current histogram
 	 */
 	@Override
 	public int getElementsSize() {
@@ -78,7 +82,7 @@ public class UVColorHistogram extends Histogram<Integer> {
 	}
 
 	/**
-	 * return the color of highest frequencies in the histagram
+	 * return the color of highest frequencies in the histogram
 	 * @return the most popular color in the histogram
 	 */
 	public int[] getMostPopularElement()
@@ -101,7 +105,7 @@ public class UVColorHistogram extends Histogram<Integer> {
 	}
 
 	/**
-	 * get the sorted pixels in terms of hits pixels in decreasing order. 
+	 * get the sorted pixels in terms of hits pixels get in decreasing order. 
 	 * 
 	 * Using Heap Sort O(nlogn)
 	 * 

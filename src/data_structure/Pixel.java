@@ -1,7 +1,8 @@
 package Data_structure;
 
 /**
- * This class stores the color inforamtion for each pixel in the image. Used this for heap sort purposes
+ * This class stores the color information for each pixel in the image. Used this for heap sort purposes
+ * 
  * @author allenliu
  *
  */

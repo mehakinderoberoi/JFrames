@@ -3,6 +3,12 @@ package Utility;
 import java.awt.Color;
 import Utility.Constants;
 
+/**
+ * Contains essential formulas for the library
+ * 
+ * @author allenliu
+ *
+ */
 public class Formula {
 	public static Color convertConsToColor(int color)
 	{

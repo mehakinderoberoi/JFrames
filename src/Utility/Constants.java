@@ -1,5 +1,12 @@
 package Utility;
 
+
+/**
+ * Contains all contains in the library
+ * 
+ * @author allenliu
+ *
+ */
 public class Constants {
 	
 	/* defining the directory path */
