@@ -31,7 +31,7 @@ To process an entire set of frames (note each image name must be of form "frame1
 
 
 Then you could do operations such as stroke rectangle on image, convert image to YUV color space, get only image with Y
-component, or UV component, get correlation between two images, and output an image to a specified path. See this java doc for API specification
+component, or UV component, get correlation between two images, and output an image to a specified path. See http://cs.wisc.edu/~zihao/other_resources/JFrames/ java doc for API specification
 
 License
 ---------------------------------------------------
