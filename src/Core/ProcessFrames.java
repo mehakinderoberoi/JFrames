@@ -3,11 +3,9 @@ package Core;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-
-import Utility.Constants;
 
 import Data_structure.Rectangle;
 import Data_structure.UVColorHistogram;
@@ -27,6 +25,7 @@ public class ProcessFrames {
 	private List<String> frames;	//stores the names of all frames
 	private int counter;			//use to get the name of each frame (Note frame name must be of form: frame1.jpg, frame2.jpg)
 	private String folder;			//contain the folder location
+	private List<ProcessImage> memory; 			//contains previous 7 elements; optimization for our motion tracking algorithm
 	
 	/**
 	 * Given the folder path, initialize the ProcessFrame instance
@@ -40,6 +39,9 @@ public class ProcessFrames {
 		this.folder = url;
 		this.prev = new ProcessImage(url + "/" + frames.get(0));
 		this.curr = new ProcessImage(url + "/" + frames.get(1));
+		this.memory = new LinkedList<ProcessImage>();
+		this.memory.add(prev);
+	    this.memory.add(curr);
 	}
 	
 	/**
@@ -50,6 +52,11 @@ public class ProcessFrames {
 	{
 		this.prev = this.curr;
 		this.curr = new ProcessImage(this.folder + "/" + frames.get(++counter));
+		if(1 + this.memory.size() > 7)
+		{
+			this.memory.remove(0);
+		}
+		this.memory.add(this.curr);
 	}
 	
 	/**
@@ -101,9 +108,9 @@ public class ProcessFrames {
 	 * between two images to verify that this is true.
 	 * 
 	 */
-	public void drawBestFitInPrevOnCurr_Correlation()
+	public void drawBestFitInPrevOnCurr_Correlation() throws IOException
 	{
-		List<Rectangle> prevRegions = this.prev.getTemplateRegions();
+		List<Rectangle> prevRegions = this.prev.getTemplateRegionsList();
 		List<Rectangle> returnedRectangle = new ArrayList<Rectangle>();
 		Random rand = new Random();
 		for(Rectangle rec : prevRegions)
@@ -164,6 +171,7 @@ public class ProcessFrames {
 					highestCorrelation = correlation;
 					bestFit = curr;
 					bestFitRec = new_rec;
+					bestFitRec.setName(rec.getName());
 				}
 			}
 			int[][][] prev_yuv = prev.readImageToYUV();
@@ -181,15 +189,43 @@ public class ProcessFrames {
 				}
 			}
 			double correlation =  prev_h.getCorrelation(curr_h);
-			if(correlation > 0.70)
+			if(correlation > 0.70 && verifyROIOnTrack(this.curr, this.memory, bestFitRec))
 			{
 				this.curr.strokeRectOnImage(bestFitRec);
 				returnedRectangle.add(bestFitRec);
 			}
 		}
-		this.curr.setTemplateRegions(returnedRectangle);
+		
+		this.curr.setTemplateRegionsList(returnedRectangle);
 	}
 	
+	/**
+	 * Given two process image, one is ranked random number between 4 and 7 before the current processed image
+	 * , the second is the current image. The goal for this is to reduce the number of false positive introduced 
+	 * by using drawBestFitInPrevOnCurr_Correlation and drawBestFitInPrevOnCurr_Similarity
+	 *
+	 * @return true if ROI identified by drawBestFitInPrevOnCurr_Correlation or drawBestFitInPrevOnCurr_Correlation correctly
+	 * mapped the ROI in current image; false otherwise
+	 */
+	private static boolean verifyROIOnTrack(ProcessImage currImg, List<ProcessImage> memory, Rectangle curr) throws IOException
+	{
+		Random rand = new Random();
+		String name = currImg.getName();
+		int currNum = Integer.parseInt(name.substring(name.lastIndexOf("e") + 1));
+		int randNum = rand.nextInt(4) + 4;
+		if(currNum - randNum > 0)
+		{
+			//read that previous frame first
+			ProcessImage prev = memory.get(currNum - randNum - 1);
+			Rectangle prevRec = prev.getTemplateRegion(curr.getName());
+			double correlation = prev.getRectangleImage(prevRec).getCorrelationBetweenImages(currImg.getRectangleImage(curr));
+			if (correlation < 0.70)
+			{
+				return false;
+			}
+		}
+		return true;
+	}
 	/**
 	 * Given a set of template region in each ProcessImage, move the rectangle box a bit 25px around to determine the best
 	 * fit with the previous template in prev image
@@ -200,7 +236,7 @@ public class ProcessFrames {
 	 */
 	public void drawBestFitInPrevOnCurr_Similarity()
 	{
-		List<Rectangle> prevRegions = this.prev.getTemplateRegions();
+		List<Rectangle> prevRegions = this.prev.getTemplateRegionsList();
 		List<Rectangle> returnedRectangle = new ArrayList<Rectangle>();
 		Random rand = new Random();
 		for(Rectangle rec : prevRegions)
@@ -277,7 +313,6 @@ public class ProcessFrames {
 				}
 			}
 			double similarity =  prev_h.getSimilarity(curr_h);
-			System.out.println("Similarity: " + similarity);
 			if(similarity < 0.1)
 			{
 				this.curr.strokeRectOnImage(bestFitRec);

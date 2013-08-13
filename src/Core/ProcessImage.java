@@ -6,14 +6,13 @@ import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.Hashtable;
 import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import Utility.Formula;
-
 import Data_structure.Rectangle;
+import Utility.Formula;
 
 
 /**
@@ -53,9 +52,10 @@ public class ProcessImage {
 	private BufferedImage img;	//private instance holding the actual image. See more on BufferedImage in Java official doc
 	private int width, height;			//width and height for the image
 	private String url;					//url for the image
-
-	private List<Rectangle> templateRegions;		//store a list of rectangles on this image that serves as template for next image 
-
+	private String name;		//name of this image: frame1.jpg
+	
+	private Hashtable<String, Rectangle> templateRegions;	//store rectangles on this image that serves as template for next image 
+	private List<Rectangle> templateRegionsList;
 	/**
 	 * Given the url (relative or absolute), initialize a ProcessImage object
 	 * 
@@ -70,7 +70,9 @@ public class ProcessImage {
 		this.width = this.img.getWidth();
 		this.height = this.img.getHeight();
 		this.url = url;
-		templateRegions = null;
+		this.templateRegions = new Hashtable<String, Rectangle>();
+		this.templateRegionsList = null;
+		this.name = url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.'));
 	}
 	/**
 	 * Given the BufferedImage, create an instance of ProcessImage
@@ -82,26 +84,58 @@ public class ProcessImage {
 		this.img = img;
 		this.width = img.getWidth();
 		this.height = img.getHeight();
-		this.url = null;
+		this.url = this.name = null;
+	}
+	
+	/**
+	 * Return the name of this image
+	 * @return name of the image
+	 */
+	public String getName()
+	{
+		return this.name;
 	}
 
 	/**
 	 * set which region in this image that we want to use it as template to do the template 
-	 * matching with the next image
+	 * matching with the next image; used for motion tracking optimization
 	 * @param regions specify the rectangle region we select as template
 	 */
 	public void setTemplateRegions(List<Rectangle> regions)
 	{
-		this.templateRegions = regions;
+		for(Rectangle rec : regions)
+		{
+			this.templateRegions.put(rec.getName(), rec);
+		}
+	}
+	
+	/**
+	 * Given the name of the rectangle, return the rectangle itself in this instance of ProcessImage
+	 * @param name name of the rectangle
+	 * @return return the rectangle with the name
+	 */
+	public Rectangle getTemplateRegion(String name)
+	{
+		return this.templateRegions.get(name);
+	}
+	
+	/**
+	 * set which region in this image that we want to use it as template to do the template 
+	 * matching with the next image; used for iterating the list
+	 * @param regions specify the rectangle region we select as template
+	 */
+	public void setTemplateRegionsList(List<Rectangle> regions)
+	{
+		this.templateRegionsList = regions;
 	}
 	
 	/**
 	 * getter for template region
 	 * @return a list of templates in current image
 	 */
-	public List<Rectangle> getTemplateRegions()
+	public List<Rectangle> getTemplateRegionsList()
 	{
-		return this.templateRegions;
+		return this.templateRegionsList;
 	}
 	
 	/**

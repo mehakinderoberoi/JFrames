@@ -24,6 +24,8 @@ public class Rectangle extends Shape{
 	private int fillColor;
 	private int thickness;
 	
+	private String name;
+	
 	/* Lower right coordinate */
 	
 	public Rectangle(int x1, int y1, int x2, int y2)
@@ -47,6 +49,15 @@ public class Rectangle extends Shape{
 		this.thickness = thickness;
 	}
 
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+	
+	public String getName()
+	{
+		return this.name;
+	}
 	public void setThickness(int thick)
 	{
 		this.thickness = thick;

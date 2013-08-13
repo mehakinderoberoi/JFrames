@@ -28,6 +28,8 @@ public class TestCore {
 			ProcessImage prev = images.get(0);
 			Rectangle rec1 = new Rectangle(81, 71, 151, 161);
 			Rectangle rec2 = new Rectangle(365, 125, 428, 198);
+			rec1.setName("a");
+			rec2.setName("b");
 			rec1.setStrokeColor(Constants.COLOR_RED);
 			rec2.setStrokeColor(Constants.COLOR_RED);
 			prev.strokeRectOnImage(rec1);
