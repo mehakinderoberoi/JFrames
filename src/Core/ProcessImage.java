@@ -103,10 +103,14 @@ public class ProcessImage {
 	 */
 	public void setTemplateRegions(List<Rectangle> regions)
 	{
-		for(Rectangle rec : regions)
+		if(this.templateRegions.isEmpty())
 		{
-			this.templateRegions.put(rec.getName(), rec);
+			for(Rectangle rec : regions)
+			{
+				this.templateRegions.put(rec.getName(), rec);
+			}
 		}
+		this.templateRegionsList = regions;
 	}
 	
 	/**
@@ -117,16 +121,6 @@ public class ProcessImage {
 	public Rectangle getTemplateRegion(String name)
 	{
 		return this.templateRegions.get(name);
-	}
-	
-	/**
-	 * set which region in this image that we want to use it as template to do the template 
-	 * matching with the next image; used for iterating the list
-	 * @param regions specify the rectangle region we select as template
-	 */
-	public void setTemplateRegionsList(List<Rectangle> regions)
-	{
-		this.templateRegionsList = regions;
 	}
 	
 	/**
@@ -408,7 +402,6 @@ public class ProcessImage {
 		return this.img;
 	}
 
-
 	/**
 	 * Write the current image to a specified format
 	 *  
@@ -438,8 +431,8 @@ public class ProcessImage {
 		int[][][] yuv_img = new int[this.width][this.height][3];
 		for (int row = 0; row < this.width; row++) {
 			for (int col = 0; col < this.height; col++) {
-				Color color_img1 = new Color(img.getRGB(row, col));
-				yuv_img[row][col] = rgb2yuv(color_img1);
+				Color color_img = new Color(img.getRGB(row, col));
+				yuv_img[row][col] = rgb2yuv(color_img);
 			}
 		}
 		return yuv_img;
@@ -466,43 +459,40 @@ public class ProcessImage {
 		{
 			throw new IllegalArgumentException("Two images must be of same size");
 		}
-		double[] yuv_img1 = new double[width_img1 * height_img1 * 3];
+		int multiplication_result = width_img1 * height_img1 * 3;
+		double[] yuv_img1 = new double[multiplication_result];
+		double[] yuv_img2 = new double[multiplication_result];
 		double sum_yuv_img1 = 0.0;
 		double avg_yuv_img1 = 0.0;
-		int index = 0;
+		double sum_yuv_img2 = 0.0;
+		double avg_yuv_img2 = 0.0;
+		int index1 = 0;
+		int index2 = 0;
 		for (int row = 0; row < width_img1; row++) {
 			for (int col = 0; col < height_img1; col++) {
 				Color color_img1 = new Color(this.img.getRGB(row, col));
-				int y = rgb2yuv(color_img1)[0];
-				int u = rgb2yuv(color_img1)[1];
-				int v = rgb2yuv(color_img1)[2];
-				yuv_img1[index++] = y;
-				yuv_img1[index++] = u;
-				yuv_img1[index++] = v;
-				sum_yuv_img1 += y + u + v;
-			}
-		}
-		avg_yuv_img1 = Math.ceil((double) sum_yuv_img1 / (width_img1 * height_img1 * 3));
-		index = 0;
-		double[] yuv_img2 = new double[width_img2 * height_img2 * 3];
-		double sum_yuv_img2 = 0.0;
-		double avg_yuv_img2 = 0.0;
-		for (int row = 0; row < width_img2; row++) {
-			for (int col = 0; col < height_img2; col++) {
 				Color color_img2 = new Color(other.getImage().getRGB(row, col));
-				int y = rgb2yuv(color_img2)[0];
-				int u = rgb2yuv(color_img2)[1];
-				int v = rgb2yuv(color_img2)[2];
-				yuv_img2[index++] = y;
-				yuv_img2[index++] = u;
-				yuv_img2[index++] = v;
-				sum_yuv_img2 += y + u + v;
+				int y1 = rgb2yuv(color_img1)[0];
+				int u1 = rgb2yuv(color_img1)[1];
+				int v1 = rgb2yuv(color_img1)[2];
+				int y2 = rgb2yuv(color_img2)[0];
+				int u2 = rgb2yuv(color_img2)[1];
+				int v2 = rgb2yuv(color_img2)[2];
+				yuv_img1[index1++] = y1;
+				yuv_img1[index1++] = u1;
+				yuv_img1[index1++] = v1;
+				yuv_img2[index2++] = y2;
+				yuv_img2[index2++] = u2;
+				yuv_img2[index2++] = v2;
+				sum_yuv_img1 += y1 + u1 + v1;
+				sum_yuv_img2 += y2 + u2 + v2;
 			}
 		}
-		avg_yuv_img2 = Math.ceil((double)sum_yuv_img2 / (width_img2 * height_img2 * 3));
+		avg_yuv_img1 = Math.ceil((double) sum_yuv_img1 / multiplication_result);		
+		avg_yuv_img2 = Math.ceil((double) sum_yuv_img2 / multiplication_result);
 		//naive implementation to find the cos(theta)
 		double inner_product = 0.0;
-		for (int i = 0; i < 3 * width_img1 * height_img1; i++)
+		for (int i = 0; i < multiplication_result; i++)
 		{
 			inner_product += (yuv_img1[i] - avg_yuv_img1) * (yuv_img2[i] - avg_yuv_img2);
 		}
@@ -510,9 +500,6 @@ public class ProcessImage {
 		for(int i = 0; i < yuv_img1.length; i++)
 		{
 			inner_img1 += Math.pow(yuv_img1[i] -avg_yuv_img1 , 2.0);
-		}
-		for(int i = 0; i < yuv_img2.length; i++)
-		{
 			inner_img2 += Math.pow(yuv_img2[i] - avg_yuv_img2, 2.0);
 		}
 		double length_product = Math.sqrt(inner_img1) * Math.sqrt(inner_img2);
@@ -554,6 +541,15 @@ public class ProcessImage {
 		return img;
 	}
 
+	/**
+	 * Print the name and URL for the current working image
+	 */
+	public String toString()
+	{
+		String message = "name: " + this.name + " url: " + this.url;
+		return message;
+	}
+	
 	/**
 	 * helper to convert rbg color mode to yuv color mode
 	 * @param Color the color component

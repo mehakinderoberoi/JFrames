@@ -15,9 +15,47 @@ public class TestCore {
 	public static String output_dir = Constants.output_dir;
 	public static void main(String[] args)
 	{
-		testImprovements();
+		testImprovementsOnShort();
 	}
-	private static void testImprovements()
+	private static void testImprovementsOnShort()
+	{
+		int counter = 1;
+		long correlation_time = 0;
+		try
+		{
+			long startTime = System.currentTimeMillis();
+			ProcessFrames frames = new ProcessFrames(input_dir);
+			List<ProcessImage> images = frames.getPrevCurrImages();
+			ProcessImage prev = images.get(0);
+			Rectangle rec = new Rectangle(410, 51, 470, 121);
+			rec.setName("a");
+			rec.setStrokeColor(Constants.COLOR_RED);
+			prev.strokeRectOnImage(rec);
+			List<Rectangle> l = new ArrayList<Rectangle>();
+			l.add(rec);
+			prev.setTemplateRegions(l);
+			frames.outputPrevImg(output_dir + "/frame" + (counter++) + ".jpg");
+			while(frames.hasNext())
+			{
+				long start = System.currentTimeMillis();
+				frames.drawBestFitInPrevOnCurr_Correlation();
+				long end = System.currentTimeMillis();
+				correlation_time += (end - start);
+				frames.outputCurrImg(output_dir + "/frame" + (counter++) + ".jpg");
+				frames.next();
+			}
+			frames.outputCurrImg(output_dir + "/frame" + (counter++) + ".jpg");
+			long endTime = System.currentTimeMillis();
+			System.out.println("Took "+(endTime - startTime) + " s"); 
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		System.out.println("verify ROI Time: " + ProcessFrames.verifyROIOnTime);
+		System.out.println("Correlation Time: " + correlation_time);
+	}
+	private static void testImprovementsOnShort1()
 	{
 		int counter = 1;
 		try
@@ -42,7 +80,7 @@ public class TestCore {
 			while(frames.hasNext())
 			{
 				frames.drawBestFitInPrevOnCurr_Correlation();
-				frames.outputPrevImg(output_dir + "/frame" + (counter++) + ".jpg");
+				frames.outputCurrImg(output_dir + "/frame" + (counter++) + ".jpg");
 				frames.next();
 			}
 			frames.outputCurrImg(output_dir + "/frame" + (counter++) + ".jpg");

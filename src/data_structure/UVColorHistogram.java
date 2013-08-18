@@ -187,31 +187,28 @@ public class UVColorHistogram extends Histogram<Integer> {
 		{
 			throw new IllegalArgumentException("Two histograms must be of same size");
 		}
-		double[] his1 = new double[this.buckets.length * this.buckets[0].length];
+		int multiplication = this.buckets.length * this.buckets[0].length;
+		double[] his1 = new double[multiplication];
+		double[] his2 = new double[multiplication];
 		double sum_his1 = 0.0;
+		double sum_his2 = 0.0;
 		double avg_his1 = 0.0;
-		int index = 0;
+		double avg_his2 = 0.0;
+		int index1 = 0;
+		int index2 = 0;
 		for (int i = 0; i < this.buckets.length; i++) {
 			for (int j = 0; j < this.buckets[0].length; j++) {
-				his1[index++] = this.buckets[i][j];
+				his1[index1++] = this.buckets[i][j];
+				his2[index2++] = o.buckets[i][j];
 				sum_his1 += this.buckets[i][j];
-			}
-		}
-		avg_his1 = Math.ceil((double) sum_his1 / (this.buckets.length * this.buckets[0].length));
-		index = 0;
-		double[] his2 = new double[o.buckets.length * this.buckets[0].length];
-		double sum_his2 = 0.0;
-		double avg_his2 = 0.0;
-		for (int i = 0; i < o.buckets.length; i++) {
-			for (int j = 0; j < o.buckets[0].length; j++) {
-				his2[index++] = o.buckets[i][j];
 				sum_his2 += o.buckets[i][j];
 			}
 		}
-		avg_his2 = Math.ceil((double)sum_his2 / (o.buckets.length * this.buckets[0].length));
+		avg_his1 = Math.ceil((double) sum_his1 / multiplication);
+		avg_his2 = Math.ceil((double) sum_his2 / multiplication);
 		//naive implementation to find the cos(theta)
 		double inner_product = 0.0;
-		for (int i = 0; i < o.buckets.length * this.buckets[0].length; i++)
+		for (int i = 0; i < multiplication; i++)
 		{
 			inner_product += (his1[i] - avg_his1) * (his2[i] - avg_his2);
 		}
@@ -219,9 +216,6 @@ public class UVColorHistogram extends Histogram<Integer> {
 		for(int i = 0; i < his1.length; i++)
 		{
 			inner_his1 += Math.pow(his1[i] -avg_his1 , 2.0);
-		}
-		for(int i = 0; i < his2.length; i++)
-		{
 			inner_his2 += Math.pow(his2[i] - avg_his2, 2.0);
 		}
 		double length_product = Math.sqrt(inner_his1) * Math.sqrt(inner_his2);
