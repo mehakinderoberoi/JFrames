@@ -209,7 +209,6 @@ public class ProcessFrames {
 		{
 			//read that previous frame first
 			ProcessImage prev = memory.get(randNum);
-			//System.out.println("curr: " + currImg.getName() + " prev: " + prev.getName() + " index: " + randNum);
 			Rectangle prevRec = prev.getTemplateRegion(curr.getName());
 			double correlation = prev.getRectangleImage(prevRec).getCorrelationBetweenImages(currImg.getRectangleImage(curr));
 			if (correlation < 0.70)

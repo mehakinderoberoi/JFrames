@@ -104,6 +104,17 @@ public class Rectangle extends Shape{
 		return Math.abs(this.y1 - this.y2);
 	}
 	
+	public double distanceTo(Rectangle other)
+	{
+		double midx_rec1 = (this.x1 + this.x2) / 2;
+		double midy_rec1 = (this.y1 + this.y2) / 2;
+		double midx_rec2 = (other.x1 + other.x2) / 2;
+		double midy_rec2 = (other.y1 + other.y2) / 2;
+		double first_part = Math.pow(midx_rec1 - midx_rec2, 2);
+		double second_part = Math.pow(midy_rec1 - midy_rec2, 2);
+		return Math.sqrt(first_part + second_part);
+	}
+	
 	public String toString()
 	{
 		StringBuilder s = new StringBuilder();

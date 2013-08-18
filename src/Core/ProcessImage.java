@@ -462,12 +462,8 @@ public class ProcessImage {
 		int multiplication_result = width_img1 * height_img1 * 3;
 		double[] yuv_img1 = new double[multiplication_result];
 		double[] yuv_img2 = new double[multiplication_result];
-		double sum_yuv_img1 = 0.0;
-		double avg_yuv_img1 = 0.0;
-		double sum_yuv_img2 = 0.0;
-		double avg_yuv_img2 = 0.0;
-		int index1 = 0;
-		int index2 = 0;
+		double sum_yuv_img1 = 0.0, sum_yuv_img2 = 0.0, avg_yuv_img1 = 0.0, avg_yuv_img2 = 0.0;
+		int index1 = 0, index2 = 0;
 		for (int row = 0; row < width_img1; row++) {
 			for (int col = 0; col < height_img1; col++) {
 				Color color_img1 = new Color(this.img.getRGB(row, col));
