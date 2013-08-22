@@ -134,22 +134,34 @@ public class ProcessFrames {
 				if(new_x1 < 0)
 				{
 					new_x1 = 0;
-					new_x2 += Math.abs(offset);
+					int new_offset = new_x1 - x1;
+					new_x2 = x2 + new_offset;
+					new_y1 = y1 + new_offset;
+					new_y2 = y2 + new_offset;
 				}
 				if(new_y1 < 0)
 				{
 					new_y1 = 0;
-					new_y2 += Math.abs(offset);
+					int new_offset = new_y1 - y1;
+					new_y2 = y2 + new_offset;
+					new_x1 = x1 + new_offset;
+					new_x2 = x2 + new_offset;
 				}
 				if (new_x2 > this.curr.getDimention()[0] - 1)
 				{
 					new_x2 = this.curr.getDimention()[0] - 1;
-					new_x1 -= Math.abs(offset);
+					int new_offset = new_x2 - x2;
+					new_x1 = x1 + new_offset;
+					new_y2 = y2 + new_offset;
+					new_y1 = y1 + new_offset;
 				}
 				if(new_y2 > this.curr.getDimention()[1] - 1)
-				{
-					new_y1 -= Math.abs(offset);
+				{	
 					new_y2 = this.curr.getDimention()[1] - 1;
+					int new_offset = Math.abs(new_y2 - y2);
+					new_y1 = y1 + new_offset;
+					new_x1 = x1 + new_offset;
+					new_x2 = x2 + new_offset;
 				}	
 				//System.out.println("x1: " + new_x1 + " y1: " + new_y1 + " x2: " + new_x2 + " y2: " + new_y2);
 				Rectangle new_rec = new Rectangle(new_x1, new_y1, new_x2, new_y2);
@@ -231,22 +243,34 @@ public class ProcessFrames {
 				if(new_x1 < 0)
 				{
 					new_x1 = 0;
-					new_x2 += Math.abs(offset);
+					int new_offset = new_x1 - x1;
+					new_x2 = x2 + new_offset;
+					new_y1 = y1 + new_offset;
+					new_y2 = y2 + new_offset;
 				}
 				if(new_y1 < 0)
 				{
 					new_y1 = 0;
-					new_y2 += Math.abs(offset);
+					int new_offset = new_y1 - y1;
+					new_y2 = y2 + new_offset;
+					new_x1 = x1 + new_offset;
+					new_x2 = x2 + new_offset;
 				}
 				if (new_x2 > this.curr.getDimention()[0] - 1)
 				{
 					new_x2 = this.curr.getDimention()[0] - 1;
-					new_x1 -= Math.abs(offset);
+					int new_offset = new_x2 - x2;
+					new_x1 = x1 + new_offset;
+					new_y2 = y2 + new_offset;
+					new_y1 = y1 + new_offset;
 				}
 				if(new_y2 > this.curr.getDimention()[1] - 1)
-				{
-					new_y1 -= Math.abs(offset);
+				{	
 					new_y2 = this.curr.getDimention()[1] - 1;
+					int new_offset = Math.abs(new_y2 - y2);
+					new_y1 = y1 + new_offset;
+					new_x1 = x1 + new_offset;
+					new_x2 = x2 + new_offset;
 				}	
 				//System.out.println("x1: " + new_x1 + " y1: " + new_y1 + " x2: " + new_x2 + " y2: " + new_y2);
 				Rectangle new_rec = new Rectangle(new_x1, new_y1, new_x2, new_y2);
