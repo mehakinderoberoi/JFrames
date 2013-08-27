@@ -1,9 +1,9 @@
 package Data_structure;
 
-import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 
 import Utility.Constants;
-import Utility.Formula;
 
 /**
  * Use this class to represent retangle regions on the ProcessImage
@@ -120,6 +120,34 @@ public class Rectangle extends Shape{
 		StringBuilder s = new StringBuilder();
 		s.append("x1: " + this.x1 + " y1 : " + this.y1 + " x2: " + this.x2 + " y2: " + this.y2);
 		return s.toString();
+	}
+	
+	/**
+	 * Given two list of rectangles. Compute a list of distinct rectangles
+	 * @param estimated
+	 * @param detected
+	 * @return a list of distinct rectangles
+	 */
+	public static List<Rectangle> getDistinctRectangles(List<Rectangle> estimated, List<Rectangle> detected)
+	{
+		List<Rectangle> clonePrev = new ArrayList<Rectangle>(estimated);
+		for(int i = 0; i < detected.size(); i++)
+		{
+			List<Rectangle> removeList = new ArrayList<Rectangle>();
+			for(int j = 0; j < clonePrev.size(); j++)
+			{
+				 int x_overlap = Math.max(0, Math.min(detected.get(i).getLowerRightX(), clonePrev.get(j).getLowerRightX()) - Math.max(detected.get(i).getUpperLeftX(), clonePrev.get(j).getUpperLeftX()));
+				 int y_overlap = Math.max(0, Math.min(detected.get(i).getLowerRightY(), clonePrev.get(j).getLowerRightY()) - Math.max(detected.get(i).getUpperLeftY(), clonePrev.get(j).getUpperLeftY()));
+				 if (x_overlap * y_overlap > 0.5 * (clonePrev.get(j).calcArea()))
+				 {
+					 removeList.add(clonePrev.get(j));
+				 }
+			}
+			clonePrev.removeAll(removeList);
+		}
+		List<Rectangle> result = new ArrayList<Rectangle>(detected);
+		result.addAll(clonePrev);
+		return result;
 	}
 	
 	@Override
