@@ -222,10 +222,13 @@ public class ProcessFrames {
 			//read that previous frame first
 			ProcessImage prev = memory.get(randNum);
 			Rectangle prevRec = prev.getTemplateRegion(curr.getName());
-			double correlation = prev.getRectangleImage(prevRec).getCorrelationBetweenImages(currImg.getRectangleImage(curr));
-			if (correlation < 0.70)
+			if(prevRec != null)
 			{
-				return false;
+				double correlation = prev.getRectangleImage(prevRec).getCorrelationBetweenImages(currImg.getRectangleImage(curr));
+				if (correlation < 0.70)
+				{
+					return false;
+				}
 			}
 		}
 		return true;
@@ -358,7 +361,7 @@ public class ProcessFrames {
 			}
 		}
 		List<String> result = new ArrayList<String>();
-		for(int i = 1; i <= numFiles; i++)
+		for(int i = 0; i < numFiles; i++)
 		{
 			result.add("frame" + i + ".jpg");
 		}

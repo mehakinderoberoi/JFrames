@@ -2,6 +2,7 @@ package Data_structure;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import Utility.Constants;
 
@@ -37,6 +38,8 @@ public class Rectangle extends Shape{
 		this.strokeColor = Constants.COLOR_BLACK;
 		this.fillColor = Constants.COLOR_BLACK;
 		this.thickness = 1;
+		String rawUIUD = UUID.randomUUID().toString();
+		this.name = rawUIUD.replace("-", "");
 	}
 	public Rectangle(int x1, int y1, int x2, int y2, int thickness)
 	{
@@ -47,6 +50,8 @@ public class Rectangle extends Shape{
 		this.strokeColor = Constants.COLOR_BLACK;
 		this.fillColor = Constants.COLOR_BLACK;
 		this.thickness = thickness;
+		String rawUIUD = UUID.randomUUID().toString();
+		this.name = rawUIUD.replace("-", "");
 	}
 
 	public void setName(String name)
